@@ -12,28 +12,28 @@ namespace XTemp;
  */
 abstract class TagLib
 {
-	public $xmlns = "";
+	public static $xmlns = "";
 	
 	
 	/**
 	 * 
-	 * @param unknown $element
+	 * @param \DOMElement $element
 	 * @return XTemp\Tree\Component
 	 */
-	public function process($element)
+	public function create($element)
 	{
 		$name = $element->nodeName;
-		$fname = 'process' . ucfirst($name);
+		$fname = 'create' . ucfirst($name);
 		$call = array($this, $fname);
 		if (is_callable($call))
-			call_user_func($call, $element);
+			return call_user_func($call, $element);
 		else
-			$this->unknown($element);
+			return $this->unknownElement($element);
 	}
 	
-	public function unknown($element)
+	public function unknownElement($element)
 	{
-		
+		return null;
 	}
 	
 	

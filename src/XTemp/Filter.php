@@ -6,12 +6,20 @@
 
 namespace XTemp;
 
+require __DIR__ . '/Libs/libs.php';
+
 /**
  *
  * @author      burgetr
  */
 class Filter
 {
+	protected $namespaces;
+	
+	public function __construct()
+	{
+		$this->buildNamespaceTable();
+	}
 	
 	public function process($src)
 	{
@@ -19,9 +27,23 @@ class Filter
 		$domRoot = $document->documentElement;
 		if ($domRoot)
 		{
+			print_r($domRoot);
 		}
 		else
 			return '';
+	}
+	
+	public function buildTree($element)
+	{
+		$uri = $element->namespaceURI;
+		if (isset($this->namespaces[$uri]))
+		{
+			$classname = $this->namespaces[$uri];
+			$taglib = new $classname;
+			return $taglib->process($element);  
+		}
+		else
+			return NULL;
 	}
 	
 	private function loadXML($inputXML) 
@@ -36,6 +58,20 @@ class Filter
 		libxml_clear_errors();
 	
 		return $dom;
+	}
+	
+	public function buildNamespaceTable()
+	{
+		$this->namespaces = array();
+		foreach (get_declared_classes() as $class)
+		{
+	        if (is_subclass_of($class, 'XTemp\TagLib'))
+	        {
+	        	$ref = new \ReflectionClass($class);
+	        	$xmlns = $ref->getStaticPropertyValue('xmlns');
+	            $this->namespaces[$xmlns] = $class;
+	        }
+	    }
 	}
 	
 }
