@@ -27,23 +27,47 @@ class Filter
 		$domRoot = $document->documentElement;
 		if ($domRoot)
 		{
-			print_r($domRoot);
+			$rootComp = $this->buildTree($domRoot);
+			return $rootComp->render();
 		}
 		else
 			return '';
 	}
 	
-	public function buildTree($element)
+	public function buildTree($node)
+	{
+		if ($node instanceof \DOMElement)
+		{
+			$ret = $this->createComponent($node);
+			if ($ret)
+			{
+				foreach ($node->childNodes as $child)
+				{
+					$ccomp = $this->buildTree($child);
+					$ret->addChild($ccomp);
+				}
+				return $ret;
+			}
+			else
+				throw new ComponentNotFoundException("Couldn't create component for tag " . $node->nodeName);
+		}
+		else if ($node instanceof \DOMText)
+		{
+			return new Tree\Content($node);
+		}
+	}
+	
+	private function createComponent($element)
 	{
 		$uri = $element->namespaceURI;
 		if (isset($this->namespaces[$uri]))
 		{
 			$classname = $this->namespaces[$uri];
 			$taglib = new $classname;
-			return $taglib->process($element);  
+			return $taglib->create($element);
 		}
 		else
-			return NULL;
+			throw new TagLibraryNotFoundException("Couldn't find tag library for namespace " . $uri);
 	}
 	
 	private function loadXML($inputXML) 

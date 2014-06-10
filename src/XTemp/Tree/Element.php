@@ -10,7 +10,7 @@ namespace XTemp\Tree;
  *
  * @author      burgetr
  */
-class Element extends Component
+abstract class Element extends Component
 {
 	protected $domElement;
 	
@@ -20,7 +20,7 @@ class Element extends Component
 		$this->domElement = $domElement;
 	}
 	
-	//================================= Utilities ===========================================
+	//================================= Rendering Utilities ===========================================
 	
 	protected function renderStartElement()
 	{
@@ -34,6 +34,16 @@ class Element extends Component
 	protected function renderEndElement()
 	{
 		return '</' . $this->domElement->nodeName . '>';
+	}
+	
+	//================================= Attribute Utilities ===========================================
+	
+	protected function requireAttr($name)
+	{
+		if ($this->domElement->hasAttribute($name))
+			return $this->domElement->getAttribute($name);
+		else
+			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
 	}
 	
 }

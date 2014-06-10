@@ -10,7 +10,7 @@ namespace XTemp\Tree;
  *
  * @author      burgetr
  */
-class Content
+class Content extends Component
 {
 	protected $domNode;
 	

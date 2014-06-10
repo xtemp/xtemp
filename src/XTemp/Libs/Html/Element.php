@@ -15,9 +15,7 @@ class Element extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		$this->renderStartElement();
-		$this->renderChildren();
-		$this->renderEndElement();
+		return $this->renderStartElement() . $this->renderChildren() . $this->renderEndElement();
 	}
 	
 }

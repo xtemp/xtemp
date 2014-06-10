@@ -18,4 +18,5 @@ class Html extends \Xtemp\TagLib
 	{
 		return new Element($element);
 	}
+	
 }
