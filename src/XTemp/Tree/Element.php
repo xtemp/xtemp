@@ -22,18 +22,31 @@ abstract class Element extends Component
 	
 	//================================= Rendering Utilities ===========================================
 	
+	public function getSimpleName()
+	{
+		$name = $this->domElement->nodeName;
+		if ($pp = strpos($name, ':') !== FALSE) //strip namespace from the tag name
+			$name = substr($name, $pp + 1);
+		return $name;
+	}
+	
 	protected function renderStartElement()
 	{
-		$ret = '<' . $this->domElement->nodeName;
+		$ret = '<' . $this->getSimpleName();
 		foreach ($this->domElement->attributes as $attr)
-			$ret .= ' ' . $attr->nodeName . '="' . $attr->nodeValue . '"';
+			$ret .= ' ' . $this->renderAttribute($attr->nodeName);
 		$ret .= '>';
 		return $ret;
 	}
 	
 	protected function renderEndElement()
 	{
-		return '</' . $this->domElement->nodeName . '>';
+		return '</' . $this->getSimpleName() . '>';
+	}
+
+	protected function renderAttribute($name)
+	{
+		return $name . '="' . $this->domElement->getAttribute($name) . '"';
 	}
 	
 	//================================= Attribute Utilities ===========================================
@@ -46,4 +59,11 @@ abstract class Element extends Component
 			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
 	}
 	
+	protected function useAttr($name, $default)
+	{
+		if ($this->domElement->hasAttribute($name))
+			return $this->domElement->getAttribute($name);
+		else
+			return $default;
+	}
 }

@@ -14,9 +14,20 @@ class Html extends \Xtemp\TagLib
 {
 	public static $xmlns = "http://github.com/radkovo/xtemp/ns/core";
 	
+	public function createA($element)
+	{
+		return new AElement($element);
+	}
+	
 	public function createIf($element)
 	{
 		return new IfElement($element);
 	}
+	
+	public function createOut($element)
+	{
+		return new OutElement($element);
+	}
+	
 	
 }
