@@ -49,6 +49,7 @@ abstract class TagLib
 				$ns = substr($ns, 0, $ci);
 			//check the class
 			$cname = $ns . '\\' . ucfirst($name) . 'Element';
+			#echo "Exist " . $cname . ": " . class_exists($cname, TRUE). "<br>";
 			if (class_exists($cname, TRUE))
 			{
 				return new $cname($element);

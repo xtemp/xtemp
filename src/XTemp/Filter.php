@@ -28,6 +28,7 @@ class Filter
 		if ($domRoot)
 		{
 			$rootComp = $this->buildTree($domRoot);
+			$this->prepareRendering($rootComp);
 			return $rootComp->render();
 		}
 		else
@@ -55,6 +56,13 @@ class Filter
 		{
 			return new Tree\Content($node);
 		}
+	}
+	
+	public function prepareRendering($root)
+	{
+		$root->beforeRender();
+		foreach ($root->getChildren() as $child)
+			$this->prepareRendering($child);
 	}
 	
 	private function createComponent($element)

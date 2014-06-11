@@ -25,9 +25,12 @@ abstract class Component
 		$this->parent = NULL;
 		$this->children = array();
 	}
+
+	public function beforeRender()
+	{
+	}
 	
 	abstract public function render();
-	
 	
 	//============================= Basic tree operations ====================================
 	

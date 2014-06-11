@@ -14,10 +14,13 @@ abstract class Element extends Component
 {
 	protected $domElement;
 	
+	protected $attributes;
+	
 	public function __construct($domElement)
 	{
 		parent::__construct();
 		$this->domElement = $domElement;
+		$this->loadAttributes();
 	}
 	
 	//================================= Rendering Utilities ===========================================
@@ -32,11 +35,10 @@ abstract class Element extends Component
 	
 	protected function renderStartElement()
 	{
-		$ret = '<' . $this->getSimpleName();
-		foreach ($this->domElement->attributes as $attr)
-			$ret .= ' ' . $this->renderAttribute($attr->nodeName);
-		$ret .= '>';
-		return $ret;
+		$attrs = trim($this->renderAttributes());
+		if ($attrs)
+			$attrs = ' ' . $attrs;
+		return '<' . $this->getSimpleName() . $attrs . '>';
 	}
 	
 	protected function renderEndElement()
@@ -44,12 +46,27 @@ abstract class Element extends Component
 		return '</' . $this->getSimpleName() . '>';
 	}
 
+	protected function renderAttributes()
+	{
+		$ret = '';
+		foreach ($this->attributes as $name => $value)
+			$ret .= ' ' . $this->renderAttribute($name);
+		return $ret;
+	}
+	
 	protected function renderAttribute($name)
 	{
-		return $name . '="' . $this->domElement->getAttribute($name) . '"';
+		return $name . '="' . $this->attributes[$name] . '"';
 	}
 	
 	//================================= Attribute Utilities ===========================================
+
+	protected function loadAttributes()
+	{
+		$this->attributes = array();
+		foreach ($this->domElement->attributes as $attr)
+			$this->attributes[$attr->nodeName] = $attr->nodeValue;
+	}
 	
 	protected function requireAttr($name)
 	{
