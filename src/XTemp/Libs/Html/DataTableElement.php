@@ -4,7 +4,7 @@
  * DataTable.php created on 11. 6. 2014 by burgetr
  */
 
-namespace XTemp\Libs\Ui;
+namespace XTemp\Libs\Html;
 
 /**
  *
