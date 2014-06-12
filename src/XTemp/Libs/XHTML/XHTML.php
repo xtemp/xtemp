@@ -1,16 +1,17 @@
 <?php
 /*
  * XTemp - XML Templating Engine for PHP
- * Html.php created on 6. 6. 2014 by burgetr
+ * XHTML.php created on 6. 6. 2014 by burgetr
  */
 
-namespace XTemp\Libs\Html;
+namespace XTemp\Libs\XHTML;
 
 /**
- *
+ * Standard XHTML tag library.
+ * 
  * @author      burgetr
  */
-class Html extends \Xtemp\TagLib
+class XHTML extends \Xtemp\TagLib
 {
 	public static $xmlns = "http://www.w3.org/1999/xhtml";
 	
