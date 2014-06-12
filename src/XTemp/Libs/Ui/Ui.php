@@ -12,6 +12,6 @@ namespace XTemp\Libs\Ui;
  */
 class Ui extends \XTemp\Taglib
 {
-	public static $xmlns = "http://github.com/radkovo/xtemp/ns/ui";
+	public static $xmlns = "http://github.com/xtemp/ns/ui";
 	
 }

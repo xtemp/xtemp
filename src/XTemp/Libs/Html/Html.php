@@ -13,5 +13,5 @@ namespace XTemp\Libs\Html;
  */
 class HTML extends \XTemp\Taglib
 {
-	public static $xmlns = "http://github.com/radkovo/xtemp/ns/html";
+	public static $xmlns = "http://github.com/xtemp/ns/html";
 }
