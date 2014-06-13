@@ -30,7 +30,7 @@ class Loader extends Latte\Loaders\FileLoader
 	public function getContent($file)
 	{
 		$src = parent::getContent($file);
-		return $this->filter->process($src);
+		return $this->filter->process($src, $file);
 	}
 	
 }

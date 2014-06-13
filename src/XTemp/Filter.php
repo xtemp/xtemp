@@ -21,21 +21,40 @@ class Filter
 		$this->buildNamespaceTable();
 	}
 	
-	public function process($src)
+	public function process($src, $file = NULL)
 	{
-		$document = $this->loadXML($src);
-		$domRoot = $document->documentElement;
-		if ($domRoot)
+		$tree = $this->buildTree($src, $file);
+		if ($tree)
 		{
-			$rootComp = $this->buildTree($domRoot);
-			$this->prepareRendering($rootComp);
-			return $rootComp->render();
+			if (!$tree->getRoot())
+			{
+				return "Empty tree for $file";
+			}
+			$this->prepareRendering($tree->getRoot());
+			return $tree->render();
 		}
 		else
 			return '';
 	}
 	
-	public function buildTree($node)
+	public function buildTree($src, $file = NULL)
+	{
+		$document = $this->loadXML($src);
+		$domRoot = $document->documentElement;
+		if ($domRoot)
+		{
+			#echo "BUILD: <pre>"; print_r($domRoot); echo "</pre>";
+			$tree = new Tree\ComponentTree($file);
+			$r = $this->buildSubtree($tree, $domRoot);
+			#echo "TREE: <pre>"; print_r($tree); echo "</pre>";
+			#echo "ROOT: <pre>"; print_r($r); echo "</pre>";
+			return $tree;
+		}
+		else
+			return NULL;
+	} 
+	
+	public function buildSubtree($tree, $node)
 	{
 		if ($node instanceof \DOMElement)
 		{
@@ -44,8 +63,9 @@ class Filter
 			{
 				foreach ($node->childNodes as $child)
 				{
-					$ccomp = $this->buildTree($child);
-					$ret->addChild($ccomp);
+					$ccomp = $this->buildSubtree($tree, $child);
+					if ($ccomp)
+						$ccomp->addToTree($tree, $ret);
 				}
 				return $ret;
 			}
@@ -56,6 +76,8 @@ class Filter
 		{
 			return new Tree\Content($node);
 		}
+		else
+			return NULL; //remaining node types (comments etc)
 	}
 	
 	public function prepareRendering($root)
@@ -68,14 +90,20 @@ class Filter
 	private function createComponent($element)
 	{
 		$uri = $element->namespaceURI;
-		if (isset($this->namespaces[$uri]))
+		if (!$uri)
+		{
+			throw new TagLibraryNotFoundException("Namespace for <" . $element->nodeName . "> is not defined");
+		}
+		else if (isset($this->namespaces[$uri]))
 		{
 			$classname = $this->namespaces[$uri];
 			$taglib = new $classname;
 			return $taglib->create($element);
 		}
 		else
+		{
 			throw new TagLibraryNotFoundException("Couldn't find tag library for namespace " . $uri);
+		}
 	}
 	
 	private function loadXML($inputXML) 

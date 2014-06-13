@@ -13,6 +13,9 @@ namespace XTemp\Tree;
  */
 abstract class Component
 {
+	/** @var XTemp\Tree\ComponentTree */
+	protected $tree;
+	
 	/** @var XTemp\Tree\Component */
 	protected $parent;
 	
@@ -30,8 +33,30 @@ abstract class Component
 	{
 	}
 	
-	abstract public function render();
+	/**
+	 * Adds this node to the tree. Standard behavior is to add the node under the parent node
+	 * or to make it a tree root when the parent is <code>NULL</code>. However, some components
+	 * may put themselves to different places of the tree. 
+	 * 
+	 * @param XTemp\Tree\ComponentTree $tree
+	 * @param XTemp\Tree\Component $parent
+	 */
+	public function addToTree($tree, $parent)
+	{
+		$this->tree = $tree;
+		if ($parent)
+			$parent->addChild($this);
+		else
+			$tree->setRoot($this);
+	}
 	
+	/**
+	 * Renders the component subtree rooted in this node to HTML.
+	 * 
+	 * @return A HTML string representing the whole subtree.
+	 */
+	abstract public function render();
+
 	//============================= Basic tree operations ====================================
 	
 	/**
