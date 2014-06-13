@@ -43,11 +43,8 @@ class Filter
 		$domRoot = $document->documentElement;
 		if ($domRoot)
 		{
-			#echo "BUILD: <pre>"; print_r($domRoot); echo "</pre>";
 			$tree = new Tree\ComponentTree($file);
-			$r = $this->buildSubtree($tree, $domRoot);
-			#echo "TREE: <pre>"; print_r($tree); echo "</pre>";
-			#echo "ROOT: <pre>"; print_r($r); echo "</pre>";
+			$tree->setRoot($this->buildSubtree($tree, $domRoot));
 			return $tree;
 		}
 		else
@@ -61,11 +58,12 @@ class Filter
 			$ret = $this->createComponent($node);
 			if ($ret)
 			{
+				$ret->setTree($tree);
 				foreach ($node->childNodes as $child)
 				{
 					$ccomp = $this->buildSubtree($tree, $child);
 					if ($ccomp)
-						$ccomp->addToTree($tree, $ret);
+						$ret->addChild($ccomp);
 				}
 				return $ret;
 			}
@@ -74,7 +72,9 @@ class Filter
 		}
 		else if ($node instanceof \DOMText)
 		{
-			return new Tree\Content($node);
+			$ret = new Tree\Content($node);
+			$ret->setTree($tree);
+			return $ret;
 		}
 		else
 			return NULL; //remaining node types (comments etc)
@@ -109,9 +109,9 @@ class Filter
 	private function loadXML($inputXML) 
 	{
 		$dom = new \DOMDocument();
-	
+		$dom->substituteEntities = false;
 		libxml_use_internal_errors(true);
-		if (!$dom->loadxml($inputXML)) {
+		if (!$dom->loadXML($inputXML)) {
 			$errors = libxml_get_errors();
 			throw new \XTemp\XMLParseException($errors);
 		}

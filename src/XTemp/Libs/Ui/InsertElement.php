@@ -20,9 +20,14 @@ class InsertElement extends \XTemp\Tree\Element
 		$this->name = $this->requireAttr('name');
 	}
 
+	public function getName()
+	{
+		return $this->name;
+	}
+	
 	public function render()
 	{
-		return "insert " . $this->name;
+		return $this->renderChildren();
 	}
 	
 }

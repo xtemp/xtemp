@@ -29,25 +29,13 @@ abstract class Component
 		$this->children = array();
 	}
 
-	public function beforeRender()
-	{
-	}
-	
-	/**
-	 * Adds this node to the tree. Standard behavior is to add the node under the parent node
-	 * or to make it a tree root when the parent is <code>NULL</code>. However, some components
-	 * may put themselves to different places of the tree. 
-	 * 
-	 * @param XTemp\Tree\ComponentTree $tree
-	 * @param XTemp\Tree\Component $parent
-	 */
-	public function addToTree($tree, $parent)
+	public function setTree($tree)
 	{
 		$this->tree = $tree;
-		if ($parent)
-			$parent->addChild($this);
-		else
-			$tree->setRoot($this);
+	}
+	
+	public function beforeRender()
+	{
 	}
 	
 	/**
@@ -86,6 +74,13 @@ abstract class Component
 		$child->parent = NULL;
 	}
 	
+	public function removeAllChildren()
+	{
+		foreach ($this->children as $child)
+			$child->parent = NULL;
+		$this->children = array();
+	}
+	
 	/**
 	 * 
 	 * @param XTemp\Tree\Component $child
@@ -96,6 +91,12 @@ abstract class Component
 			$child->parent->removeChild($child);
 		$child->parent = $this;
 		$this->children[] = $child;
+	}
+
+	public function addAll($list)
+	{
+		foreach ($list as $child)
+			$this->addChild($child);
 	}
 	
 	//============================= Subtree processing methods ====================================

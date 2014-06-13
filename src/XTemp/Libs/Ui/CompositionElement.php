@@ -20,15 +20,38 @@ class CompositionElement extends \XTemp\Tree\Element
 		$this->template = $this->requireAttr('template');
 	}
 	
+	public function beforeRender()
+	{
+		$ttree = $this->createTemplateTree();
+		$troot = $ttree->getRoot();
+		
+		//find the ui:define tags and match them
+		foreach ($this->getChildren() as $child)
+		{
+			if ($child instanceof DefineElement)
+			{
+				$name = $child->getName();
+				$ins = $this->findInsert($name, $troot);
+				if ($ins)
+				{
+					$ins->removeAllChildren();
+					$ins->addAll($child->getChildren());
+				}
+			}
+		}
+		
+		$this->tree->setRoot($troot);
+	}
+	
 	public function render()
 	{
 		return $this->tree->getFile();
 	}
 	
-	/*public function addToTree($tree, $parent)
+	//=========================================================================
+	
+	private function createTemplateTree()
 	{
-		$this->tree = $tree;
-		
 		//load the referenced template
 		$file = dirname($this->tree->getFile()) . '/' . $this->template;
 		if (!is_file($file)) {
@@ -38,13 +61,24 @@ class CompositionElement extends \XTemp\Tree\Element
 		//create a new tree from the template
 		$filter = new \XTemp\Filter();
 		$tempTree = $filter->buildTree($src, $file);
-		//make the template tree the main tree
-		if ($parent) 
-			$parent->addChild($tempTree->getRoot());
+		return $tempTree;
+	}
+	
+	private function findInsert($name, $root)
+	{
+		if ($root instanceof InsertElement && $root->getName() == $name)
+		{
+			return $root;
+		}
 		else
-			$tree->setRoot($tempTree->getRoot());
-		//$tree->setRoot($this);
-	}*/
-
+		{
+			foreach ($root->getChildren() as $child)
+			{
+				if (($ret = $this->findInsert($name, $child)) != NULL)
+					return $ret;
+			}
+		}
+		return NULL;
+	}
 	
 }

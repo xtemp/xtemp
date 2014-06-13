@@ -20,6 +20,11 @@ class DefineElement extends \XTemp\Tree\Element
 		$this->name = $this->requireAttr('name');
 	}
 
+	public function getName()
+	{
+		return $this->name;
+	}
+	
 	public function render()
 	{
 		return "def " . $this->name;

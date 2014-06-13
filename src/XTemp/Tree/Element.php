@@ -23,6 +23,14 @@ abstract class Element extends Component
 		$this->loadAttributes();
 	}
 	
+	public function getAttribute($name)
+	{
+		if (isset($this->attributes[$name]))
+			return $this->attributes[$name];
+		else
+			return "";
+	}
+	
 	//================================= Rendering Utilities ===========================================
 	
 	public function getSimpleName()
