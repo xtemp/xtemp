@@ -10,19 +10,19 @@ namespace XTemp\Libs\Ui;
  *
  * @author      burgetr
  */
-class CompositionElement extends \XTemp\Tree\Element
+class CompositionElement extends CompoundElementBase
 {
 	private $template;
 	
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->template = $this->requireAttr('template');
 	}
 	
 	public function beforeRender()
 	{
-		$ttree = $this->createTemplateTree();
+		$this->template = $this->requireAttr('template');
+		$ttree = $this->createTemplateTree($this->template);
 		$troot = $ttree->getRoot();
 		
 		//find the ui:define tags and match them
@@ -40,45 +40,13 @@ class CompositionElement extends \XTemp\Tree\Element
 			}
 		}
 		
-		$this->tree->setRoot($troot);
+		$this->getTree()->setRoot($troot);
 	}
 	
 	public function render()
 	{
-		return $this->tree->getFile();
+		return $this->getTree()->getFile();
 	}
 	
-	//=========================================================================
-	
-	private function createTemplateTree()
-	{
-		//load the referenced template
-		$file = dirname($this->tree->getFile()) . '/' . $this->template;
-		if (!is_file($file)) {
-			throw new \RuntimeException("Missing template file '$file' referenced in '" . $this->tree->getFile() . "'");
-		}
-		$src = file_get_contents($file);
-		//create a new tree from the template
-		$filter = new \XTemp\Filter();
-		$tempTree = $filter->buildTree($src, $file);
-		return $tempTree;
-	}
-	
-	private function findInsert($name, $root)
-	{
-		if ($root instanceof InsertElement && $root->getName() == $name)
-		{
-			return $root;
-		}
-		else
-		{
-			foreach ($root->getChildren() as $child)
-			{
-				if (($ret = $this->findInsert($name, $child)) != NULL)
-					return $ret;
-			}
-		}
-		return NULL;
-	}
 	
 }

@@ -34,6 +34,11 @@ abstract class Component
 		$this->tree = $tree;
 	}
 	
+	public function getTree()
+	{
+		return $this->tree;
+	}
+	
 	public function beforeRender()
 	{
 	}

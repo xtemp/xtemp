@@ -12,8 +12,8 @@ namespace XTemp\Tree;
  */
 abstract class Element extends Component
 {
+	protected static $serialNum = 1;
 	protected $domElement;
-	
 	protected $attributes;
 	
 	public function __construct($domElement)
@@ -29,6 +29,14 @@ abstract class Element extends Component
 			return $this->attributes[$name];
 		else
 			return "";
+	}
+	
+	public function getId()
+	{
+		if (isset($this->attributes['id']))
+			return $this->attributes['id'];
+		else
+			return NULL;
 	}
 	
 	//================================= Rendering Utilities ===========================================
@@ -74,6 +82,18 @@ abstract class Element extends Component
 		$this->attributes = array();
 		foreach ($this->domElement->attributes as $attr)
 			$this->attributes[$attr->nodeName] = $attr->nodeValue;
+	}
+	
+	protected function checkId()
+	{
+		if (!isset($this->attributes['id']))
+			$this->attributes['id'] = $this->generateId();
+		return $this->attributes['id'];
+	}
+	
+	protected function generateId()
+	{
+		return '_xt_' . (Element::$serialNum++);
 	}
 	
 	protected function requireAttr($name)
