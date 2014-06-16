@@ -27,9 +27,7 @@ class Filter
 		if ($tree)
 		{
 			if (!$tree->getRoot())
-			{
-				return "Empty tree for $file";
-			}
+				return '';
 			$this->prepareRendering($tree->getRoot());
 			return $tree->render();
 		}
