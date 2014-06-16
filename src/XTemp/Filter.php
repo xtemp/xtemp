@@ -74,6 +74,12 @@ class Filter
 			$ret->setTree($tree);
 			return $ret;
 		}
+		else if ($node instanceof \DOMEntityReference)
+		{
+			$ret = new Tree\Entity($node);
+			$ret->setTree($tree);
+			return $ret;
+		}
 		else
 			return NULL; //remaining node types (comments etc)
 	}
@@ -107,7 +113,7 @@ class Filter
 	private function loadXML($inputXML) 
 	{
 		$dom = new \DOMDocument();
-		$dom->substituteEntities = false;
+		$dom->substituteEntities = true;
 		libxml_use_internal_errors(true);
 		if (!$dom->loadXML($inputXML)) {
 			$errors = libxml_get_errors();
