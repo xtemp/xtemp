@@ -41,4 +41,22 @@ class ComponentTree
 		return $this->root->render();
 	}
 	
+	//=========================================================================================
+	
+	public function dumpTree()
+	{
+		echo "<ul>\n";
+		$this->recursiveDump($this->root);
+		echo "</ul>\n";
+	}
+	
+	private function recursiveDump($root)
+	{
+		echo '<li>' . $root->toString() . "\n";
+		echo '<ul>';
+		foreach ($root->getChildren() as $child)
+			$this->recursiveDump($child);
+		echo "</ul></li>\n";
+	}
+	
 }

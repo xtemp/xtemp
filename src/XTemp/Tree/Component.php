@@ -29,6 +29,11 @@ abstract class Component
 		$this->children = array();
 	}
 
+	public function toString()
+	{
+		return get_class($this);
+	}
+	
 	public function setTree($tree)
 	{
 		$this->tree = $tree;
@@ -94,6 +99,7 @@ abstract class Component
 	{
 		if ($child->parent !== NULL)
 			$child->parent->removeChild($child);
+		$this->recursiveSetTree($child, $this->getTree());
 		$child->parent = $this;
 		$this->children[] = $child;
 	}
@@ -102,6 +108,13 @@ abstract class Component
 	{
 		foreach ($list as $child)
 			$this->addChild($child);
+	}
+	
+	protected function recursiveSetTree($root, $tree)
+	{
+		$root->setTree($tree);
+		foreach ($root->getChildren() as $child)
+			$this->recursiveSetTree($child, $tree);
 	}
 	
 	//============================= Subtree processing methods ====================================

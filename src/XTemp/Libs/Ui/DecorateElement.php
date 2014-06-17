@@ -37,13 +37,9 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 					$ins = $this->findInsert($name, $comp);
 					if ($ins)
 					{
-						echo "$name found";
 						$ins->removeAllChildren();
 						$ins->addAll($child->getChildren());
 					}
-					else
-						echo "$name not found";
-						
 				}
 			}
 		}
@@ -52,16 +48,13 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 		if ($comp)
 		{
 			foreach ($comp->getChildren() as $child)
-			{
 				$this->addChild($child);
-				echo "add " . get_class($child) . "<br>";
-			}
 		}
 	}
 	
 	public function render()
 	{
-		$this->renderChildren();
+		return $this->renderChildren();
 	}
 	
 }

@@ -23,6 +23,11 @@ abstract class Element extends Component
 		$this->loadAttributes();
 	}
 	
+	public function toString()
+	{
+		return get_class($this) . '(' . $this->domElement->nodeName . ')';
+	}
+	
 	public function getAttribute($name)
 	{
 		if (isset($this->attributes[$name]))

@@ -20,6 +20,11 @@ class Content extends Component
 		$this->domNode = $domNode;
 	}
 	
+	public function toString()
+	{
+		return get_class($this) . '(' . trim($this->domNode->nodeValue) . ')';
+	}
+	
 	public function render()
 	{
 		if ($this->domNode instanceof \DOMText)
