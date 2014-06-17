@@ -36,6 +36,7 @@ class CompositionElement extends CompoundElementBase
 		{
 			$ttree = $this->createTemplateTree($this->template);
 			$troot = $ttree->getRoot();
+			$params = array();
 			
 			//find the ui:define tags and match them
 			foreach ($this->getChildren() as $child)
@@ -50,15 +51,26 @@ class CompositionElement extends CompoundElementBase
 						$ins->addAll($child->getChildren());
 					}
 				}
+				else if ($child instanceof ParamElement)
+				{
+					$params[] = $child;
+				}
 			}
 			
-			$this->getTree()->setRoot($troot);
+			$container = new ParametrizedContainer($params);
+			$container->addChild($troot);
+			$this->getTree()->setRoot($container);
+		}
+		else
+		{
+			//no template specified, use the composition as the template root
+			$this->tree->setRoot($this);
 		}
 	}
 	
 	public function render()
 	{
-		return $this->getTree()->getFile();
+		return $this->renderChildren();
 	}
 	
 	

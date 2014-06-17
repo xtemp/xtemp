@@ -1,7 +1,7 @@
 <?php
 /*
  * XTemp - XML Templating Engine for PHP
- * ComponentElement.php created on 16. 6. 2014 by burgetr
+ * FragmentElement.php created on 17. 6. 2014 by burgetr
  */
 
 namespace XTemp\Libs\Ui;
@@ -10,9 +10,9 @@ namespace XTemp\Libs\Ui;
  *
  * @author burgetr
  */
-class ComponentElement extends \XTemp\Tree\Element
+class FragmentElement extends \XTemp\Tree\Element
 {
-	private $rendered; 
+	private $rendered;
 	
 	public function __construct($domElement)
 	{
@@ -20,11 +20,9 @@ class ComponentElement extends \XTemp\Tree\Element
 		$this->checkId();
 		$this->rendered = $this->useAttr('rendered', 'true');
 	}
-
+	
 	public function restructureTree()
 	{
-		//ignore the rest of the tree, use this component as the rendering root
-		$this->tree->setRoot($this);
 	}
 	
 	public function render()
@@ -34,6 +32,5 @@ class ComponentElement extends \XTemp\Tree\Element
 		else
 			return '';
 	}
-	
 	
 }

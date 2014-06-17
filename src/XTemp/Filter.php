@@ -30,6 +30,12 @@ class Filter
 				return '';
 			$this->restructureTree($tree->getRoot());
 			$this->prepareRendering($tree->getRoot());
+			
+			/*$tree->dumpTree();
+			echo "<pre>";
+			echo htmlspecialchars($tree->render());
+			echo "</pre>";*/
+			
 			return $tree->render();
 		}
 		else
@@ -87,16 +93,16 @@ class Filter
 	
 	public function restructureTree($root)
 	{
-		$root->restructureTree();
 		foreach ($root->getChildren() as $child)
 			$this->restructureTree($child);
+		$root->restructureTree();
 	}
 	
 	public function prepareRendering($root)
 	{
-		$root->beforeRender();
 		foreach ($root->getChildren() as $child)
 			$this->prepareRendering($child);
+		$root->beforeRender();
 	}
 	
 	private function createComponent($element)

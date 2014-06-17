@@ -22,33 +22,42 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 
 	public function restructureTree()
 	{
-		$ttree = $this->createTemplateTree($this->template);
-		$troot = $ttree->getRoot();
-	
-		$comp = $this->findComposition($troot);
-		if ($comp)
+		if ($this->template)
 		{
-			//find the ui:define tags and match them
-			foreach ($this->getChildren() as $child)
+			$ttree = $this->createTemplateTree($this->template);
+			$troot = $ttree->getRoot();
+			$params = array();
+				
+			if ($troot)
 			{
-				if ($child instanceof DefineElement)
+				//find the ui:define tags and match them
+				foreach ($this->getChildren() as $child)
 				{
-					$name = $child->getName();
-					$ins = $this->findInsert($name, $comp);
-					if ($ins)
+					if ($child instanceof DefineElement)
 					{
-						$ins->removeAllChildren();
-						$ins->addAll($child->getChildren());
+						$name = $child->getName();
+						$ins = $this->findInsert($name, $troot);
+						if ($ins)
+						{
+							$ins->removeAllChildren();
+							$ins->addAll($child->getChildren());
+						}
+					}
+					else if ($child instanceof ParamElement)
+					{
+						$params[] = $child;
 					}
 				}
 			}
-		}
-		
-		$this->removeAllChildren();
-		if ($comp)
-		{
-			foreach ($comp->getChildren() as $child)
-				$this->addChild($child);
+			
+			$container = new ParametrizedContainer($params);
+			$this->removeAllChildren();
+			if ($troot)
+			{
+				foreach ($troot->getChildren() as $child)
+					$container->addChild($child);
+			}
+			$this->addChild($container);
 		}
 	}
 	
