@@ -44,6 +44,10 @@ abstract class Component
 		return $this->tree;
 	}
 	
+	public function restructureTree()
+	{
+	}
+	
 	public function beforeRender()
 	{
 	}

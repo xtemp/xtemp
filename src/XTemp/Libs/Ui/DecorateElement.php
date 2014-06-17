@@ -20,7 +20,7 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 		$this->template = $this->requireAttr('template');
 	}
 
-	public function beforeRender()
+	public function restructureTree()
 	{
 		$ttree = $this->createTemplateTree($this->template);
 		$troot = $ttree->getRoot();

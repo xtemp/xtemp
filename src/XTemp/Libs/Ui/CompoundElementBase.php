@@ -25,6 +25,7 @@ abstract class CompoundElementBase extends \XTemp\Tree\Element
 		//create a new tree from the template
 		$filter = new \XTemp\Filter();
 		$tempTree = $filter->buildTree($src, $file);
+		$filter->restructureTree($tempTree->getRoot());
 		return $tempTree;
 	}
 	

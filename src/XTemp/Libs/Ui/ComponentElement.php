@@ -19,7 +19,7 @@ class ComponentElement extends \XTemp\Tree\Element
 		$this->checkId();
 	}
 
-	public function beforeRender()
+	public function restructureTree()
 	{
 		//ignore the rest of the tree, use this component as the rendering root
 		$this->tree->setRoot($this);

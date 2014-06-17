@@ -19,7 +19,7 @@ class CompositionElement extends CompoundElementBase
 		parent::__construct($domElement);
 	}
 	
-	public function beforeRender()
+	public function restructureTree()
 	{
 		$this->template = $this->requireAttr('template');
 		$ttree = $this->createTemplateTree($this->template);

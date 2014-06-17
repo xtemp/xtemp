@@ -28,6 +28,7 @@ class Filter
 		{
 			if (!$tree->getRoot())
 				return '';
+			$this->restructureTree($tree->getRoot());
 			$this->prepareRendering($tree->getRoot());
 			return $tree->render();
 		}
@@ -82,6 +83,13 @@ class Filter
 		}
 		else
 			return NULL; //remaining node types (comments etc)
+	}
+	
+	public function restructureTree($root)
+	{
+		$root->restructureTree();
+		foreach ($root->getChildren() as $child)
+			$this->restructureTree($child);
 	}
 	
 	public function prepareRendering($root)
