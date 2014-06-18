@@ -21,6 +21,7 @@ abstract class CompoundElementBase extends \XTemp\Tree\Element
 		if (!is_file($file)) {
 			throw new \RuntimeException("Missing template file '$file' referenced in '" . $this->getTree()->getFile() . "'");
 		}
+		$this->getTree()->addDependency($file);
 		$src = file_get_contents($file);
 		//create a new tree from the template
 		$filter = new \XTemp\Filter();
@@ -62,6 +63,5 @@ abstract class CompoundElementBase extends \XTemp\Tree\Element
 		}
 		return NULL;
 	}
-	
 	
 }

@@ -14,7 +14,7 @@ class ComponentTree
 {
 	private $file;
 	private $root;
-	
+	protected $dependencies = array();
 	
 	public function __construct($file)
 	{
@@ -34,6 +34,17 @@ class ComponentTree
 	public function getFile()
 	{
 		return $this->file;
+	}
+	
+	public function addDependency($path)
+	{
+		if (!in_array($path, $this->dependencies))
+			$this->dependencies[] = $path;
+	}
+	
+	public function getDependencies()
+	{
+		return $this->dependencies;
 	}
 	
 	public function render()

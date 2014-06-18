@@ -15,6 +15,7 @@ require __DIR__ . '/Libs/libs.php';
 class Filter
 {
 	protected $namespaces;
+	protected $dependencies;
 	
 	public function __construct()
 	{
@@ -30,6 +31,7 @@ class Filter
 				return '';
 			$this->restructureTree($tree->getRoot());
 			$this->prepareRendering($tree->getRoot());
+			$this->dependencies = $tree->getDependencies();
 			
 			/*$tree->dumpTree();
 			echo "<pre>";
@@ -103,6 +105,11 @@ class Filter
 		foreach ($root->getChildren() as $child)
 			$this->prepareRendering($child);
 		$root->beforeRender();
+	}
+	
+	public function getDependencies()
+	{
+		return $this->dependencies;
 	}
 	
 	private function createComponent($element)
