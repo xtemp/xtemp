@@ -16,18 +16,8 @@ abstract class CompoundElementBase extends \XTemp\Tree\Element
 	
 	protected function createTemplateTree($templateName)
 	{
-		//load the referenced template
 		$file = dirname($this->getTree()->getFile()) . '/' . $templateName;
-		if (!is_file($file)) {
-			throw new \RuntimeException("Missing template file '$file' referenced in '" . $this->getTree()->getFile() . "'");
-		}
-		$this->getTree()->addDependency($file);
-		$src = file_get_contents($file);
-		//create a new tree from the template
-		$filter = new \XTemp\Filter();
-		$tempTree = $filter->buildTree($src, $file);
-		$filter->restructureTree($tempTree->getRoot());
-		return $tempTree;
+		return $this->loadExternalTemplate($file);
 	}
 	
 	protected function findInsert($name, $root)

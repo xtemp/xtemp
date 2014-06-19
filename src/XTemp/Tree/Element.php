@@ -116,4 +116,29 @@ abstract class Element extends Component
 		else
 			return $default;
 	}
+	
+	//================================= Template nesting ==============================================
+	
+	protected function loadExternalTemplate($file)
+	{
+		//load the referenced template
+		if (!is_file($file)) {
+			throw new \RuntimeException("Missing template file '$file' referenced in '" . $this->getTree()->getFile() . "'");
+		}
+		$this->getTree()->addDependency($file);
+		$src = file_get_contents($file);
+		//create a new tree from the template
+		$filter = new \XTemp\Filter();
+		$tempTree = $filter->buildTree($src, $file);
+		$filter->restructureTree($tempTree->getRoot());
+		return $tempTree;
+	}
+	
+	protected function addResourceTemplate($file)
+	{
+		$tree = $this->loadExternalTemplate($file);
+		if ($tree && $tree->getRoot())
+			$this->addChild($tree->getRoot());
+	}
+	
 }
