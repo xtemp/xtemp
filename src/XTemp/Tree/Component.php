@@ -52,6 +52,11 @@ abstract class Component
 	{
 	}
 	
+	public function renderProlog()
+	{
+		return '';
+	}
+	
 	/**
 	 * Renders the component subtree rooted in this node to HTML.
 	 * 

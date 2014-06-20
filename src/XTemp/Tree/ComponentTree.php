@@ -49,7 +49,17 @@ class ComponentTree
 	
 	public function render()
 	{
-		return $this->root->render();
+		return $this->renderProlog($this->root) . $this->root->render();
+	}
+	
+	//=========================================================================================
+	
+	public function renderProlog($root)
+	{
+		$ret = $root->renderProlog();
+		foreach ($root->getChildren() as $child)
+			$ret .= $this->renderProlog($child);
+		return $ret;
 	}
 	
 	//=========================================================================================

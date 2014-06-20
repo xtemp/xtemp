@@ -134,11 +134,13 @@ abstract class Element extends Component
 		return $tempTree;
 	}
 	
-	protected function addResourceTemplate($file)
+	protected function addResourceTemplate($file, $params)
 	{
+		$cont = new LocalScope($params);
 		$tree = $this->loadExternalTemplate($file);
 		if ($tree && $tree->getRoot())
-			$this->addChild($tree->getRoot());
+			$cont->addChild($tree->getRoot());
+		$this->addChild($cont);
 	}
 	
 }
