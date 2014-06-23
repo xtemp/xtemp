@@ -54,26 +54,24 @@ class ResourcePresenter extends XTempPresenter
 			else
 			{
 				$resp = $this->getContext()->getService('httpResponse');
-				//$resp->setCode(\Nette\Http\Response::S404_NOT_FOUND);
-				$resp->redirect('http://www.seznam.cz');
+				$resp->setCode(\Nette\Http\Response::S404_NOT_FOUND);
 			}
 		}
 		else
 		{
-			$resp = $this->getContainer()->getService('httpResponse');
+			$resp = $this->getContext()->getService('httpResponse');
 			$resp->setCode(\Nette\Http\Response::S403_FORBIDDEN);
 		}
 	}
 	
 	private function isAllowed($path)
 	{
-		/*foreach ($this->paths as $allow)
+		foreach ($this->paths as $allow)
 		{
 			if (strpos($path, $allow) === 0)
 				return TRUE;
 		}
-		return FALSE;*/
-		return true;
+		return FALSE;
 	}
 	
 }
