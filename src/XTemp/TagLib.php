@@ -14,6 +14,10 @@ abstract class TagLib
 {
 	public static $xmlns = "";
 	
+	public static function getResourcePaths()
+	{
+		return array();
+	}
 	
 	/**
 	 * Creates a component from a DOM element. The following methods of the component creation
@@ -66,7 +70,5 @@ abstract class TagLib
 	{
 		return null;
 	}
-	
-
 	
 }

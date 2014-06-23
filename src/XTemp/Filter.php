@@ -159,4 +159,16 @@ class Filter
 	    }
 	}
 	
+	public function getResourcePaths()
+	{
+		$ret = array();
+		foreach ($this->namespaces as $url => $cls)
+		{
+			$ref = new \ReflectionMethod($cls, 'getResourcePaths');
+			$paths = $ref->invoke(NULL);
+			$ret = array_merge($ret, $paths);
+		}
+		return $ret;
+	}
+	
 }

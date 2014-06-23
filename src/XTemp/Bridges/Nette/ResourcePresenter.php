@@ -6,6 +6,8 @@
 
 namespace XTemp\Bridges\Nette;
 
+use XTemp\Filter;
+
 /**
  * A presenter used to server component's additional resources (scripts, css, etc.)
  *
@@ -14,7 +16,7 @@ namespace XTemp\Bridges\Nette;
 class ResourcePresenter extends XTempPresenter
 {
 	private $paths;
-	
+	private $resources;
 	
 	public function __construct()
 	{
@@ -32,21 +34,27 @@ class ResourcePresenter extends XTempPresenter
 		}
 	}
 	
+	public function startup()
+	{
+		parent::startup();
+		$filter = new Filter();
+		$this->paths = $filter->getResourcePaths();
+	}
+	
 	public function renderResource($path)
 	{
+		print_r($this->paths);
 		if ($this->isAllowed($path))
 		{
 			if (is_file($path) || is_link($path))
 			{
-				//dibi::query("INSERT INTO [downloads] ([resource], [name], [size], [userid]) VALUES (%s, %s, %i, %i)", 'LICENSE', $filename, filesize($path), $user->getIdentity()->id);
-
 				//guess the MIME type
 				$finfo = finfo_open(FILEINFO_MIME_TYPE);
 				$mime = finfo_file($finfo, $path);
 				finfo_close($finfo);
 				
+				//send the response
 				$response = new \Nette\Application\Responses\FileResponse($path, NULL, $mime);
-				
 				$this->context->session->close();
 				$this->sendResponse($response);
 				$this->terminate();
