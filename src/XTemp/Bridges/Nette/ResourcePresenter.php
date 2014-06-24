@@ -16,7 +16,6 @@ use XTemp\Filter;
 class ResourcePresenter extends XTempPresenter
 {
 	private $paths;
-	private $resources;
 	
 	public function __construct()
 	{
@@ -24,13 +23,13 @@ class ResourcePresenter extends XTempPresenter
 		$this->paths = array();
 	}
 	
-	public function addPath($path)
+	public function addPath($library, $path)
 	{
 		if ($path)
 		{
 			if (substr($path, 0, 1) != '/' && substr($path, 0, 1) != '\\')
 				$path = '/' . $path;
-			$this->paths[] = $path;
+			$this->paths[$library] = $path;
 		}
 	}
 	
