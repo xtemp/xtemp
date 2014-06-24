@@ -166,6 +166,12 @@ class Filter
 		{
 			$ref = new \ReflectionMethod($cls, 'getResourcePaths');
 			$paths = $ref->invoke(NULL);
+			//check the sanity of the library names
+			foreach ($paths as $lib => $path)
+			{
+				if (preg_match('/[A-Za-z][A-Za-z0-9\\.]+[A-Za-z0-9]/', $lib) !== 1)
+					throw new \XTemp\TagLibraryErrorException("Incorrect resource library ID '$lib'");
+			}
 			$ret = array_merge($ret, $paths);
 		}
 		return $ret;

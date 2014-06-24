@@ -46,6 +46,26 @@ class ComponentTree
 	{
 		return $this->dependencies;
 	}
+
+	public function getAllResources()
+	{
+		 $resources = $this->recursiveGetResources($this->getRoot());
+		 $ret = array();
+		 //unify duplicate resources
+		 foreach ($resources as $res)
+		 {
+		 	$ret[$res->getEmbeddedPath()] = $res;
+		 }
+		 return $ret;
+	}
+	
+	protected function recursiveGetResources($root)
+	{
+		$ret = $root->getResources();
+		foreach ($root->getChildren() as $child)
+			$ret = array_merge($ret, $this->recursiveGetResources($child));
+		return $ret;
+	}
 	
 	public function render()
 	{

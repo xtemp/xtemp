@@ -42,43 +42,39 @@ class ResourcePresenter extends XTempPresenter
 	
 	public function renderResource($path)
 	{
-		print_r($this->paths);
-		if ($this->isAllowed($path))
+		$path = $this->translatePath($path);
+		if ($path && (is_file($path) || is_link($path)))
 		{
-			if (is_file($path) || is_link($path))
-			{
-				//guess the MIME type
-				$finfo = finfo_open(FILEINFO_MIME_TYPE);
-				$mime = finfo_file($finfo, $path);
-				finfo_close($finfo);
-				
-				//send the response
-				$response = new \Nette\Application\Responses\FileResponse($path, NULL, $mime);
-				$this->context->session->close();
-				$this->sendResponse($response);
-				$this->terminate();
-			}
-			else
-			{
-				$resp = $this->getContext()->getService('httpResponse');
-				$resp->setCode(\Nette\Http\Response::S404_NOT_FOUND);
-			}
+			//guess the MIME type
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			$mime = finfo_file($finfo, $path);
+			finfo_close($finfo);
+			
+			//send the response
+			$response = new \Nette\Application\Responses\FileResponse($path, NULL, $mime);
+			$this->context->session->close();
+			$this->sendResponse($response);
+			$this->terminate();
 		}
 		else
 		{
 			$resp = $this->getContext()->getService('httpResponse');
-			$resp->setCode(\Nette\Http\Response::S403_FORBIDDEN);
+			$resp->setCode(\Nette\Http\Response::S404_NOT_FOUND);
 		}
 	}
 	
-	private function isAllowed($path)
+	private function translatePath($path)
 	{
-		foreach ($this->paths as $allow)
+		foreach ($this->paths as $src => $dest)
 		{
-			if (strpos($path, $allow) === 0)
-				return TRUE;
+			if (strpos($path, $src) === 0)
+			{
+				$len = strlen($src);
+				$ret = $dest . '/' . substr($path, $len);
+				return $ret;
+			}
 		}
-		return FALSE;
+		return NULL;
 	}
 	
 }

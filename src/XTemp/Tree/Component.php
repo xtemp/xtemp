@@ -22,11 +22,15 @@ abstract class Component
 	/** @var array */
 	protected $children;
 	
+	/** @var array */
+	protected $resources;
+	
 	
 	public function __construct() 
 	{
 		$this->parent = NULL;
 		$this->children = array();
+		$this->resources = array();
 	}
 
 	public function toString()
@@ -37,11 +41,23 @@ abstract class Component
 	public function setTree($tree)
 	{
 		$this->tree = $tree;
+		foreach ($this->getChildren() as $child)
+			$child->setTree($tree);
 	}
 	
 	public function getTree()
 	{
 		return $this->tree;
+	}
+	
+	public function getResources()
+	{
+		return $this->resources;
+	}
+	
+	public function addResource($resource)
+	{
+		$this->resources[] = $resource;
 	}
 	
 	public function restructureTree()
@@ -108,9 +124,10 @@ abstract class Component
 	{
 		if ($child->parent !== NULL)
 			$child->parent->removeChild($child);
-		$this->recursiveSetTree($child, $this->getTree());
 		$child->parent = $this;
 		$this->children[] = $child;
+		if ($this->getTree())
+			$child->setTree($this->getTree());
 	}
 
 	public function addAll($list)
@@ -121,7 +138,7 @@ abstract class Component
 	
 	protected function recursiveSetTree($root, $tree)
 	{
-		$root->setTree($tree);
+		$root->tree = $tree;
 		foreach ($root->getChildren() as $child)
 			$this->recursiveSetTree($child, $tree);
 	}
