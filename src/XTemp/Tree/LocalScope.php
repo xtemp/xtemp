@@ -46,10 +46,31 @@ class LocalScope extends Component
 		foreach ($this->params as $name => $value)
 		{
 			if ($paramstr) $paramstr .= ',';
-			$paramstr .= '"' . $value . '"';
+			$paramstr .= $value;
 		}
 		
 		return '<?php ' . $this->fname . "($paramstr); ?>";
+	}
+	
+	//========================================================================
+	
+	public static function paramString($value)
+	{
+		return "'" . str_replace("'", "\\'", $value) . "'";
+	}
+	
+	public static function paramNum($value)
+	{
+		if (is_numeric($value))
+			return $value;
+		else
+			return 'NaN';
+	}
+	
+	public static function paramVar($value)
+	{
+		//TODO do some checking, what if the value is null or empty?
+		return $value;
 	}
 	
 }

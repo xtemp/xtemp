@@ -109,12 +109,35 @@ abstract class Element extends Component
 			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
 	}
 	
+	protected function requireAttrNum($name)
+	{
+		$v = $this->requireAttr($name);
+		if (is_numeric($v))
+			return $v;
+		else
+			throw new \XTemp\MissingAttributeException("Attribute '$name' requires a variable name");
+	}
+	
+	protected function requireAttrVar($name)
+	{
+		$v = $this->requireAttr($name);
+		if ($this->isVarName($v))
+			return $v;
+		else
+			throw new \XTemp\MissingAttributeException("Attribute '$name' requires a variable name");
+	}
+	
 	protected function useAttr($name, $default)
 	{
 		if ($this->domElement->hasAttribute($name))
 			return $this->domElement->getAttribute($name);
 		else
 			return $default;
+	}
+	
+	protected function isVarName($name)
+	{
+		return (preg_match('/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $v) === 1);
 	}
 	
 	//================================= Template nesting ==============================================
