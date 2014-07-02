@@ -140,6 +140,72 @@ abstract class Element extends Component
 		return (preg_match('/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $v) === 1);
 	}
 	
+	/**
+	 * Translates an attribute expression to PHP. The expression syntax:
+	 * #{expression} is PHP-evaluated
+	 * the rest is constant
+	 * 
+	 * #{cid}_map => $cid . '_map'
+	 * #{$node->value} => $node->value
+	 * 
+	 * @param unknown $expr
+	 */
+	protected function translateExpr($expr)
+	{
+		$open = 0;
+		$state = 0; //0 = out{}, 1 = in{}
+		$buffer = '';
+		$ret = '';
+		
+		for ($i = 0; $i < strlen($expr); $i++)
+		{
+			$c = $expr[$i];
+			$nc = ($i+1 < strlen($expr)) ? $expr[$i+1] : '';
+			switch ($state)
+			{
+				case 0:
+					if ($c == '#' && $nc == '{')
+					{
+						if ($buffer)
+							$ret .= ".'$buffer'";
+						$buffer = '';
+						$state = 1;
+						$open = 1;
+						$i++; //skip {
+					} 
+					else
+						$buffer .= $c;
+					break;
+				case 1:
+					if ($c == '}')
+					{
+						if ($open == 1)
+						{
+							if ($buffer)
+								$ret .= ".$buffer";
+							$buffer = '';
+							$state = 0;
+						}
+						else
+							$buffer .= $c;
+						$open--;
+					}
+					else if ($c == '{')
+					{
+						$open++;
+						$buffer .= $c;
+					}
+					else
+						$buffer .= $c;
+					break;
+			}
+		}
+		if ($buffer)
+			$ret .= ".'$buffer'";
+		
+		return substr($ret, 1); //omit the leading '.'
+	}
+	
 	//================================= Template nesting ==============================================
 	
 	protected function loadExternalTemplate($file)
