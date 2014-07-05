@@ -29,10 +29,7 @@ class ComponentElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		if ($this->rendered != 'false')
-			return $this->renderChildren();
-		else
-			return '';
+		return $this->renderNotIf($this->rendered, 'false', $this->renderChildren());
 	}
 	
 	

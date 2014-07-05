@@ -92,7 +92,7 @@ abstract class Element extends Component
 	protected function checkId()
 	{
 		if (!isset($this->attributes['id']))
-			$this->attributes['id'] = $this->generateId();
+			$this->attributes['id'] = $this->translateExpr($this->generateId());
 		return $this->attributes['id'];
 	}
 	
