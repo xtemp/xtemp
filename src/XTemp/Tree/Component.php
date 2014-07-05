@@ -159,7 +159,7 @@ abstract class Component
 			return $code; //simplified variant: test would always evaluate to true
 		else
 		{
-			return "{if $test === '$value'}" . $code . "{/if}"; 
+			return "{if ($test) === '$value'}" . $code . "{/if}"; 
 		}
 	}
 	
@@ -169,18 +169,24 @@ abstract class Component
 			return ''; //simplified variant: test would always evaluate to true
 		else
 		{
-			return "{if $test !== '$value'}" . $code . "{/if}"; 
+			return "{if ($test) !== '$value'}" . $code . "{/if}"; 
 		}
 	}
 	
 	protected function renderSelect($test, $variants, $error = NULL)
 	{
+		//check if the test is a known constant -- it can be reduced to a single variant
+		foreach ($variants as $value => $code)
+		{
+			if ($test === "'$value'")
+				return $code;
+		}
+		//cannot be simplified, generate the complete test
 		$ret = '';
-		
 		$first = TRUE;
 		foreach ($variants as $value => $code)
 		{
-			$cond = "$test === '$value'";
+			$cond = "($test) === '$value'";
 			if ($first)
 				$ret .= "{if $cond}";
 			else
