@@ -17,7 +17,7 @@ class IncludeElement extends CompoundElementBase
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->src = $this->requireAttr('src');
+		$this->src = $this->requireAttrPlain('src');
 	}
 
 	public function restructureTree()

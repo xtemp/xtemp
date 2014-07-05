@@ -17,7 +17,7 @@ class DefineElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->name = $this->requireAttr('name');
+		$this->name = $this->requireAttrPlain('name');
 	}
 
 	public function getName()

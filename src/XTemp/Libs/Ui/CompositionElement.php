@@ -17,7 +17,7 @@ class CompositionElement extends CompoundElementBase
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->template = $this->useAttr('template', null);
+		$this->template = $this->useAttrPlain('template', null);
 	}
 	
 	/**

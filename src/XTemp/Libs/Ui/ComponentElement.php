@@ -18,7 +18,7 @@ class ComponentElement extends \XTemp\Tree\Element
 	{
 		parent::__construct($domElement);
 		$this->checkId();
-		$this->rendered = $this->useAttr('rendered', 'true');
+		$this->rendered = $this->useAttrExpr('rendered', 'true');
 	}
 
 	public function restructureTree()

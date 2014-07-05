@@ -153,6 +153,26 @@ abstract class Component
 		return $ret;
 	}
 	
+	protected function renderIf($test, $value, $code)
+	{
+		if ($test == "'$value'")
+			return $code; //simplified variant: test would always evaluate to true
+		else
+		{
+			return "{if $test === '$value'}" . $code . "{/if}"; 
+		}
+	}
+	
+	protected function renderNotIf($test, $value, $code)
+	{
+		if ($test == "'$value'")
+			return ''; //simplified variant: test would always evaluate to true
+		else
+		{
+			return "{if $test !== '$value'}" . $code . "{/if}"; 
+		}
+	}
+	
 	protected function renderSelect($test, $variants, $error = NULL)
 	{
 		$ret = '';
@@ -160,7 +180,7 @@ abstract class Component
 		$first = TRUE;
 		foreach ($variants as $value => $code)
 		{
-			$cond = "$test == '$value'";
+			$cond = "$test === '$value'";
 			if ($first)
 				$ret .= "{if $cond}";
 			else

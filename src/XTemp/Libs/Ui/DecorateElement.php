@@ -17,7 +17,7 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->template = $this->requireAttr('template');
+		$this->template = $this->requireAttrPlain('template');
 	}
 
 	public function restructureTree()

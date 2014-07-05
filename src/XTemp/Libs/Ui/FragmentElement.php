@@ -18,7 +18,7 @@ class FragmentElement extends \XTemp\Tree\Element
 	{
 		parent::__construct($domElement);
 		$this->checkId();
-		$this->rendered = $this->useAttr('rendered', 'true');
+		$this->rendered = $this->useAttrExpr('rendered', 'true');
 	}
 	
 	public function restructureTree()
@@ -27,10 +27,7 @@ class FragmentElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		if ($this->rendered != 'false')
-			return $this->renderChildren();
-		else
-			return '';
+		return $this->renderNotIf($this->rendered, 'false', $this->renderChildren());
 	}
 	
 }

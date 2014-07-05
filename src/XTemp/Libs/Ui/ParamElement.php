@@ -18,8 +18,8 @@ class ParamElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->name = $this->requireAttr('name');
-		$this->value = $this->requireAttr('value');
+		$this->name = $this->requireAttrPlain('name');
+		$this->value = $this->requireAttrExpr('value');
 	}
 
 	public function getName()
