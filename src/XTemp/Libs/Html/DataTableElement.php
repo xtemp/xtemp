@@ -21,8 +21,8 @@ class DataTableElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->value = $this->requireAttr('value');
-		$this->varname = $this->requireAttr('var');
+		$this->value = $this->requireAttrExpr('value');
+		$this->varname = $this->requireAttrVar('var');
 	}
 
 	public function beforeRender()
@@ -38,9 +38,9 @@ class DataTableElement extends \XTemp\Tree\Element
 				$this->other[] = $child;
 		}
 		//set attributes for rendering
-		$cls = "table table-striped sortable";
+		$cls = $this->translateExpr("table table-striped sortable");
 		if (isset($this->attributes['class']))
-			$this->attributes['class'] = $cls . ' ' . $this->attributes['class'];
+			$this->attributes['class'] = $cls . '." ".' . $this->attributes['class'];
 		else
 			$this->attributes['class'] = $cls;
 	}
@@ -57,7 +57,7 @@ class DataTableElement extends \XTemp\Tree\Element
 		$ret .= "<thead><tr>";
 		foreach ($this->columns as $col)
 		{
-			$ret .= '<th>' . $col->getHeaderText() . '</th>';
+			$ret .= '<th>{= ' . $col->getHeaderText() . '}</th>';
 		}
 		$ret .= "</tr></thead>\n";
 		

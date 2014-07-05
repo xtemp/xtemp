@@ -18,9 +18,9 @@ class ResourcesElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->local = $this->useAttr('local', 'false');
+		$this->local = $this->useAttrPlain('local', 'false', array('true', 'false'));
 		$defLink = ($this->local != "false") ? '/resources/' : ':Resource:resource'; 
-		$this->resourceLink = $this->useAttr('resourceLink', $defLink);
+		$this->resourceLink = $this->useAttrPlain('resourceLink', $defLink);
 	}
 
 	public function render()

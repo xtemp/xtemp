@@ -17,7 +17,7 @@ class TableColumnElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->headerText = $this->requireAttr('headerText');
+		$this->headerText = $this->requireAttrExpr('headerText');
 	}
 	
 	public function render()

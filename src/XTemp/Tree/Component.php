@@ -153,4 +153,27 @@ abstract class Component
 		return $ret;
 	}
 	
+	protected function renderSelect($test, $variants, $error = NULL)
+	{
+		$ret = '';
+		
+		$first = TRUE;
+		foreach ($variants as $value => $code)
+		{
+			$cond = "$test == '$value'";
+			if ($first)
+				$ret .= "{if $cond}";
+			else
+				$ret .= "{elseif $cond}";
+			$first = FALSE;
+
+			$ret .= $code;
+		}
+		if ($error !== NULL)
+			$ret .= "{else}{? throw new \XTemp\MissingAttributeException('" . addslashes($error) . "')}";
+		$ret .= "{/if}";
+		
+		return $ret;
+	}
+	
 }

@@ -19,11 +19,8 @@ class ParamElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->value = $this->requireAttr('value');
-		$this->encoding = $this->useAttr('encoding', 'string');
-		if ($this->encoding != "string"
-			&& $this->encoding != "json")
-			throw new MissingAttributeException("Invalid encoding value: " . $this->encoding);
+		$this->value = $this->requireAttrExpr('value');
+		$this->encoding = $this->useAttrExpr('encoding', 'string');
 	}
 	
 	public function render()
@@ -36,10 +33,13 @@ class ParamElement extends \XTemp\Tree\Element
 	 */
 	public function getValue()
 	{
-		$v = $this->translateExpr($this->value);
-		if ($this->encoding == 'json')
-			return '{!= json_encode(' . $v . ')}';
-		else
-			return '{= ' . $v . '}';
+		$v = $this->value;
+		
+		return $this->renderSelect($this->encoding,
+				array(
+					'json' => '{!= json_encode(' . $v . ')}',
+					'string' => '{= ' . $v . '}'
+				),
+				"Invalid encoding value: $this->encoding");
 	}
 }

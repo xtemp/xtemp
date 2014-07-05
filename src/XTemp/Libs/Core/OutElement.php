@@ -18,16 +18,16 @@ class OutElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->value = $this->requireAttr('value');
-		$this->escape = $this->useAttr('escapeXml', "true");
+		$this->value = $this->requireAttrExpr('value');
+		$this->escape = $this->useAttrPlain('escapeXml', "true", array('true', 'false'));
 	}
 	
 	public function render()
 	{
 		if ($this->escape == "false")
-			return "{!" . $this->value . "}";
+			return "{= " . $this->value . "|noescape}";
 		else
-			return "{" . $this->value . "}";
+			return "{= " . $this->value . "}";
 	}
 	
 }

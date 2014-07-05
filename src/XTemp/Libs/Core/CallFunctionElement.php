@@ -18,7 +18,7 @@ class CallFunctionElement extends \XTemp\Tree\Element
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
-		$this->name = $this->requireAttr('name');
+		$this->name = $this->requireAttrExpr('name');
 	}
 	
 	public function beforeRender()
@@ -34,7 +34,7 @@ class CallFunctionElement extends \XTemp\Tree\Element
 	public function render()
 	{
 		$ret = '<script type="text/javascript">' . "\n";
-		$ret .= $this->name . '(';
+		$ret .= '{= ' . $this->name . '|noescape}(';
 		$first = true;
 		foreach ($this->params as $param)
 		{

@@ -77,7 +77,7 @@ abstract class Element extends Component
 	
 	protected function renderAttribute($name)
 	{
-		return $name . '="' . $this->attributes[$name] . '"';
+		return $name . '="{= ' . $this->attributes[$name] . '}"';
 	}
 	
 	//================================= Attribute Utilities ===========================================
@@ -86,7 +86,7 @@ abstract class Element extends Component
 	{
 		$this->attributes = array();
 		foreach ($this->domElement->attributes as $attr)
-			$this->attributes[$attr->nodeName] = $attr->nodeValue;
+			$this->attributes[$attr->nodeName] = $this->translateExpr($attr->nodeValue);
 	}
 	
 	protected function checkId()
@@ -101,12 +101,48 @@ abstract class Element extends Component
 		return '_xt_' . (Element::$serialNum++);
 	}
 	
-	protected function requireAttr($name)
+	protected function requireAttrPlain($name, $allowed = NULL)
 	{
 		if ($this->domElement->hasAttribute($name))
-			return $this->domElement->getAttribute($name);
+		{
+			$v = $this->domElement->getAttribute($name);
+			if ($allowed === NULL || in_array(strtolower($v), $allowed))
+				return $v;
+			else
+				throw new \XTemp\MissingAttributeException("Invalid value '$v' of the attribute '$name'");
+		}
 		else
 			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
+	}
+	
+	protected function useAttrPlain($name, $default, $allowed = NULL)
+	{
+		if ($this->domElement->hasAttribute($name))
+		{
+			$v = $this->domElement->getAttribute($name);
+			if ($allowed === NULL || in_array(strtolower($v), $allowed))
+				return $v;
+			else
+				throw new \XTemp\MissingAttributeException("Invalid value '$v' of the attribute '$name'");
+		}
+		else
+			return $default;
+	}
+	
+	protected function requireAttrExpr($name)
+	{
+		if ($this->domElement->hasAttribute($name))
+			return $this->translateExpr($this->domElement->getAttribute($name));
+		else
+			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
+	}
+	
+	protected function useAttrExpr($name, $default)
+	{
+		if ($this->domElement->hasAttribute($name))
+			return $this->translateExpr($this->domElement->getAttribute($name));
+		else
+			return $this->translateExpr($default);
 	}
 	
 	protected function requireAttrNum($name)
@@ -120,24 +156,16 @@ abstract class Element extends Component
 	
 	protected function requireAttrVar($name)
 	{
-		$v = $this->requireAttr($name);
+		$v = $this->requireAttrPlain($name);
 		if ($this->isVarName($v))
 			return $v;
 		else
 			throw new \XTemp\MissingAttributeException("Attribute '$name' requires a variable name");
 	}
-	
-	protected function useAttr($name, $default)
-	{
-		if ($this->domElement->hasAttribute($name))
-			return $this->domElement->getAttribute($name);
-		else
-			return $default;
-	}
-	
+
 	protected function isVarName($name)
 	{
-		return (preg_match('/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $v) === 1);
+		return (preg_match('/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $name) === 1);
 	}
 	
 	/**
