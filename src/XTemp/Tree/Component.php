@@ -98,6 +98,17 @@ abstract class Component
 		return $this->children;
 	}
 
+	public function getChildElements()
+	{
+		$ret = array();
+		foreach ($this->children as $child)
+		{
+			if ($child instanceof Element)
+				$ret[] = $child;
+		}
+		return $ret;
+	}
+	
 	/**
 	 * 
 	 * @param XTemp\Tree\Component $child
