@@ -30,6 +30,11 @@ class OutputLabelElement extends \XTemp\Tree\Element
 		return $this->for;
 	}
 	
+	public function getValue()
+	{
+		return $this->value;
+	}
+	
 	public function beforeRender()
 	{
 		parent::beforeRender();

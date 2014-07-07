@@ -12,10 +12,14 @@ namespace XTemp\Libs\Html;
  */
 class InputTextElement extends InputField
 {
+	private $required;
+	private $requiredMessage;
 	
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
+		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
+		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
 	}
 
 	public function beforeRender()
@@ -26,5 +30,16 @@ class InputTextElement extends InputField
 	public function render()
 	{
 		return '{input ' . $this->id . '}';
+	}
+	
+	public function getFnCall()
+	{
+		$lbl = '$labels[' . $this->id . ']';
+		$ret = 'addText(' . $this->id . ", isset($lbl)?$lbl:'')";
+		if ($this->required == "true")
+		{
+			$ret .= '->setRequired(' . $this->requiredMessage . ')';
+		}
+		return $ret;
 	}
 }

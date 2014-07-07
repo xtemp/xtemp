@@ -12,40 +12,80 @@ namespace XTemp\Libs\Html;
  */
 class FormElement extends \XTemp\Tree\Element
 {
+	private static $formSn = 1;
 	private $id;
-	
-	private $labels = array();
-	private $fields = array();
 	
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
 		$this->id = $this->checkId();
+		$this->fname = '_xt_frm_' . (FormElement::$formSn++);
+		
 	}
 
 	public function beforeRender()
 	{
 		parent::beforeRender();
-		$this->recursiveScanChildren($this);
 	}
 	
 	public function render()
 	{
-		return "{form $this->id}\n" . $this->renderChildren() . "\n{/form}";
+		$ret = '';
+		
+		$ret .= "<?php\n";
+		$ret .= 'function ' . $this->fname . "(){\n";
+		$ret .= '$labels = array();';
+		$ret .= $this->recursiveScanLabels($this);
+		
+		$ret .= '$form = new Nette\Application\UI\Form;';
+		$ret .= $this->recursiveScanFields($this);
+		
+		$ret .= 'return $form;';
+		$ret .= "}\n";
+		$ret .= '$_control[' . $this->id . '] = ' . $this->fname . "();\n";
+		$ret .= "?>\n";
+		
+		$ret .= "{form $this->id}\n" . $this->renderChildren() . "\n{/form}";
+		return $ret;
 	}
 	
 	//=========================================================================
 	
-	private function recursiveScanChildren($root)
+	private function recursiveScanLabels($root)
 	{
 		if ($root instanceof OutputLabelElement)
-			$this->labels[$root->getFor()] = $root; //TODO this should generate a PHP code
+		{
+			return '$labels[' . $root->getFor() . '] = ' . $root->getValue() . ";\n";
+		}
 		else if ($root instanceof InputField)
-			$this->fields[$root->getId()] = $root;
+		{
+			return '';
+		}
 		else
 		{
+			$ret = '';
 			foreach ($root->getChildren() as $child)
-				$this->recursiveScanChildren($child);
+				$ret .= $this->recursiveScanLabels($child);
+			return $ret;
+		}
+	}
+
+	private function recursiveScanFields($root)
+	{
+		if ($root instanceof OutputLabelElement)
+		{
+			return '';
+		}
+		else if ($root instanceof InputField)
+		{
+			return '$form->' . $root->getFnCall() . ";\n";
+		}
+		else
+		{
+			$ret = '';
+			foreach ($root->getChildren() as $child)
+				$ret .= $this->recursiveScanFields($child);
+			return $ret;
 		}
 	}
 

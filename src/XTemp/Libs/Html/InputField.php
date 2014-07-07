@@ -22,4 +22,6 @@ abstract class InputField extends \XTemp\Tree\Element
 		$this->value = $this->requireAttrExpr('value');
 	}
 	
+	abstract public function getFnCall();
+	
 }
