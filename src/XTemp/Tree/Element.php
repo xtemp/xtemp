@@ -44,14 +44,23 @@ abstract class Element extends Component
 			return NULL;
 	}
 	
-	//================================= Rendering Utilities ===========================================
-	
-	public function getSimpleName()
+	public function getElementName()
 	{
 		$name = $this->domElement->nodeName;
 		if ($pp = strpos($name, ':') !== FALSE) //strip namespace from the tag name
 			$name = substr($name, $pp + 1);
 		return $name;
+	}
+	
+	//================================= Rendering Utilities ===========================================
+	
+	/**
+	 * Obtains the name used for rendering the start element.
+	 * Redefine this for changing the rendered element name.
+	 */
+	public function getSimpleName()
+	{
+		return $this->getElementName();
 	}
 	
 	protected function renderStartElement()
@@ -141,8 +150,10 @@ abstract class Element extends Component
 	{
 		if ($this->domElement->hasAttribute($name))
 			return $this->translateExpr($this->domElement->getAttribute($name));
-		else
+		else if ($default !== NULL)
 			return $this->translateExpr($default);
+		else
+			return null;
 	}
 	
 	protected function requireAttrNum($name)

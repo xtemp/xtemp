@@ -13,12 +13,14 @@ use XTemp\MissingAttributeException;
 */
 class ParamElement extends \XTemp\Tree\Element
 {
+	private $name;
 	private $value;
 	private $encoding;
 
 	public function __construct($domElement)
 	{
 		parent::__construct($domElement);
+		$this->name = $this->useAttrPlain('name', NULL);
 		$this->value = $this->requireAttrExpr('value');
 		$this->encoding = $this->useAttrExpr('encoding', 'string');
 	}
@@ -28,6 +30,11 @@ class ParamElement extends \XTemp\Tree\Element
 		return "";
 	}
 
+	public function getName()
+	{
+		return $this->name;
+	}
+	
 	/**
 	 * Returns the value encoded by the given encoding.
 	 */
