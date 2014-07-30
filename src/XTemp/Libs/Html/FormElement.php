@@ -33,16 +33,18 @@ class FormElement extends \XTemp\Tree\Element
 		$ret = '';
 		
 		$ret .= "<?php\n";
-		$ret .= 'function ' . $this->fname . "(){\n";
+		$ret .= 'function ' . $this->fname . '($presenter){' . "\n";
 		$ret .= '$labels = array();';
 		$ret .= $this->recursiveScanLabels($this);
 		
 		$ret .= '$form = new Nette\Application\UI\Form;';
 		$ret .= $this->recursiveScanFields($this);
 		
+		$ret .= '$form->onSuccess[] = $presenter->signInFormSucceeded;';
+		
 		$ret .= 'return $form;';
 		$ret .= "}\n";
-		$ret .= '$_control[' . $this->id . '] = ' . $this->fname . "();\n";
+		$ret .= '$_control[' . $this->id . '] = ' . $this->fname . '($presenter);' . "\n";
 		$ret .= "?>\n";
 		
 		$ret .= "{form $this->id}\n" . $this->renderChildren() . "\n{/form}";

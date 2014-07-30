@@ -22,7 +22,30 @@ class Expression
 
 	public function toPHP()
 	{
-		return Expression::translate($this->src);
+		return self::translate($this->src);
+	}
+	
+	public function isLValue()
+	{
+		$v = trim($this->src);
+		if (substr($v, 0, 2) == '^{' && substr($v, -1) == '}')
+		{
+			$ids = self::parseLValue(substr($v, 2, -1));
+			return $ids !== NULL;
+		}
+		else
+			return FALSE;
+	}
+	
+	public function getLValueIdentifiers()
+	{
+		$v = trim($this->src);
+		if (substr($v, 0, 2) == '^{' && substr($v, -1) == '}')
+		{
+			return self::parseLValue(substr($v, 2, -1));
+		}
+		else
+			return NULL;
 	}
 	
 	//=========================================================================
@@ -41,7 +64,7 @@ class Expression
 	public static function translate($expr) 
 	{
 		$open = 0;
-		$state = 0; // 0 = out{}, 1 = in{}
+		$state = 0; // 0 = out {}, 1 = in #{}, 2 = in ^{}
 		$buffer = '';
 		$ret = '';
 		
@@ -52,25 +75,46 @@ class Expression
 			switch ($state)
 			{
 				case 0 :
-					if ($c == '#' && $nc == '{') 
+					if (($c == '#' || $c == '^') && $nc == '{') 
 					{
 						if ($buffer)
 							$ret .= ".'$buffer'";
 						$buffer = '';
-						$state = 1;
+						$state = ($c == '#') ? 1 : 2;
 						$open = 1;
 						$i ++; // skip {
 					} 
 					else
 						$buffer .= $c;
 					break;
-				case 1 :
+				case 1:
 					if ($c == '}') 
 					{
 						if ($open == 1) 
 						{
 							if ($buffer)
 								$ret .= ".$buffer";
+							$buffer = '';
+							$state = 0;
+						} else
+							$buffer .= $c;
+						$open --;
+					}
+					else if ($c == '{') 
+					{
+						$open ++;
+						$buffer .= $c;
+					}
+					else
+						$buffer .= $c;
+					break;
+				case 2:
+					if ($c == '}') 
+					{
+						if ($open == 1) 
+						{
+							if ($buffer)
+								$ret .= "." . self::translateLValue($buffer);
 							$buffer = '';
 							$state = 0;
 						} else
@@ -93,5 +137,48 @@ class Expression
 		return substr ( $ret, 1 ); // omit the leading '.'
 	}
 	
+	public static function translateLValue($value)
+	{
+		$ids = self::parseLValue($value);
+		if ($ids === NULL)
+		{
+			throw new \XTemp\InvalidExpressionException("Invalid LValue expression '$value'");
+		}
+		else
+		{
+			return '$presenter->' . implode('->', $ids);
+		}
+	}
+	
+	public static function parseLValue($value)
+	{
+		$v = trim($value);
+		if (strlen($v) > 2 && substr($v, 0, 1) == '$')
+		{
+			$v = substr($v, 1);
+			$ids = explode('->', $v);
+			$ret = array();
+			foreach ($ids as $cand)
+			{
+				$id = trim($cand);
+				//echo "Test '$id'<br>";
+				if (self::isVarName($id))
+					$ret[] = $id;
+				else
+					return NULL;
+			}
+			if (count($ret) == 0)
+				return NULL;
+			else
+				return $ret;
+		}
+		else
+			return NULL;
+	}
+	
+	protected static function isVarName($name)
+	{
+		return (preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $name) === 1);
+	}
 	
 }

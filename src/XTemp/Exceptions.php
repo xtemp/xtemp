@@ -40,6 +40,10 @@ class ContentNotAvalibleException extends \Latte\CompileException {
     //put your code here
 }
 
+class InvalidExpressionException extends \Latte\CompileException {
+    //put your code here
+}
+
 class XMLParseException extends \Latte\CompileException {
 
     public function __construct($errors) {
