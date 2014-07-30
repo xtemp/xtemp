@@ -43,7 +43,7 @@ class CallFunctionElement extends \XTemp\Tree\Element
 		//generate the function definition
 		if ($this->name !== NULL)
 		{
-			$prolog = '{= ' . $this->name . '|noescape}'; //call by name
+			$prolog = '{= ' . $this->name->toPHP() . '|noescape}'; //call by name
 			$epilog = '';
 		}
 		else if ($this->script !== NULL)//anonymous function

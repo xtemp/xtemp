@@ -27,7 +27,7 @@ class TableColumnElement extends \XTemp\Tree\Element
 	
 	public function getHeaderText()
 	{
-		return $this->headerText;
+		return $this->headerText->toPHP();
 	}
 	
 }

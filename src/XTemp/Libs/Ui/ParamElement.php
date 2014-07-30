@@ -29,12 +29,12 @@ class ParamElement extends \XTemp\Tree\Element
 	
 	public function getValue()
 	{
-		return $this->value();
+		return $this->value->toPHP();
 	}
 	
 	public function render()
 	{
-		return '{var ' . $this->name . ' = ' . $this->value . "}\n"; 
+		return '{var ' . $this->name . ' = ' . $this->getValue() . "}\n"; 
 	}
 	
 }

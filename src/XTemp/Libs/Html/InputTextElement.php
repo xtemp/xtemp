@@ -38,7 +38,7 @@ class InputTextElement extends InputField
 		$ret = 'addText(' . $this->id . ", isset($lbl)?$lbl:'')";
 		if ($this->required == "true")
 		{
-			$ret .= '->setRequired(' . $this->requiredMessage . ')';
+			$ret .= '->setRequired(' . $this->requiredMessage->toPHP() . ')';
 		}
 		return $ret;
 	}

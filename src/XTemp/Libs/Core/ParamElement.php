@@ -40,13 +40,13 @@ class ParamElement extends \XTemp\Tree\Element
 	 */
 	public function getValue()
 	{
-		$v = $this->value;
+		$v = $this->value->toPHP();
 		
-		return $this->renderSelect($this->encoding,
+		return $this->renderSelect($this->encoding->toPHP(),
 				array(
 					'json' => '{!= json_encode(' . $v . ')}',
 					'string' => '{= ' . $v . '}'
 				),
-				"Invalid encoding value: $this->encoding");
+				"Invalid encoding value: " . $this->encoding->toPHP());
 	}
 }

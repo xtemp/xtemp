@@ -25,9 +25,9 @@ class OutElement extends \XTemp\Tree\Element
 	public function render()
 	{
 		if ($this->escape == "false")
-			return "{= " . $this->value . "|noescape}";
+			return "{= " . $this->value->toPHP() . "|noescape}";
 		else
-			return "{= " . $this->value . "}";
+			return "{= " . $this->value->toPHP() . "}";
 	}
 	
 }

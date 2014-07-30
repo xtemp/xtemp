@@ -28,7 +28,7 @@ class AElement extends \XTemp\Tree\Element
 	protected function renderAttribute($name)
 	{
 		if ($name == "href")
-			return 'href="{link ' . $this->href . '}"';
+			return 'href="{link ' . $this->href->toPHP() . '}"';
 		else
 			return parent::renderAttribute($name); 
 	}

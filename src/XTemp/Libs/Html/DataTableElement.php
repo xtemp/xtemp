@@ -6,6 +6,7 @@
 
 namespace XTemp\Libs\Html;
 
+use XTemp\Tree\Expression;
 /**
  *
  * @author      burgetr
@@ -38,7 +39,7 @@ class DataTableElement extends \XTemp\Tree\Element
 				$this->other[] = $child;
 		}
 		//set attributes for rendering
-		$cls = $this->translateExpr("table table-striped sortable");
+		$cls = Expression::translate("table table-striped sortable");
 		if (isset($this->attributes['class']))
 			$this->attributes['class'] = $cls . '." ".' . $this->attributes['class'];
 		else
@@ -63,7 +64,7 @@ class DataTableElement extends \XTemp\Tree\Element
 		
 		//the columns
 		$ret .= "<tbody>\n";
-		$ret .= '{foreach ' . $this->value . ' as ' . $this->varname . "}\n";
+		$ret .= '{foreach ' . $this->value->toPHP() . ' as ' . $this->varname . "}\n";
 		$ret .= '<tr>';
 		foreach ($this->columns as $col)
 		{

@@ -27,12 +27,12 @@ class OutputLabelElement extends \XTemp\Tree\Element
 
 	public function getFor()
 	{
-		return $this->for;
+		return $this->for->toPHP();
 	}
 	
 	public function getValue()
 	{
-		return $this->value;
+		return $this->value->toPHP();
 	}
 	
 	public function beforeRender()
@@ -42,7 +42,7 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		return '{label ' . $this->for . '}{= ' . $this->value . '}{/label}';
+		return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
 	}
 	
 }

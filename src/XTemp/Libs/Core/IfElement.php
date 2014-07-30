@@ -22,7 +22,7 @@ class IfElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		return "\n{if {$this->cond}}\n" . $this->renderChildren() . "\n{/if}\n";
+		return "\n{if {$this->cond->toPHP()}}\n" . $this->renderChildren() . "\n{/if}\n";
 	}
 	
 }

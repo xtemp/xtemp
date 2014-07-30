@@ -22,7 +22,7 @@ class ComponentElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		return '{control ' . $this->name . '}';
+		return '{control ' . $this->name->toPHP() . '}';
 	}
 
 }
