@@ -17,7 +17,7 @@ class CommandButtonElement extends InputField
 	protected function loadParams()
 	{
 		parent::loadParams();
-		$this->action = $this->requireAttrPlain("action");
+		$this->action = $this->requireAttrExpr("action");
 	}
 
 	public function beforeRender()
@@ -33,6 +33,14 @@ class CommandButtonElement extends InputField
 	public function getAction()
 	{
 		return $this->action;
+	}
+	
+	public function getMappingValue()
+	{
+		if ($this->action !== NULL && $this->action->isLValue())
+			return implode(':', $this->action->getLValueIdentifiers());
+		else
+			return NULL;
 	}
 	
 	public function getFnCall()

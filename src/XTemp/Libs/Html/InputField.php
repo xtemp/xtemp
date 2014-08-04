@@ -26,6 +26,18 @@ abstract class InputField extends \XTemp\Tree\Element
 		return $this->value;
 	}
 	
+	/**
+	 * Returns the LValue mapped to this input field
+	 * @return string the LValue map string or NULL when no mapping is available
+	 */
+	public function getMappingValue()
+	{
+		if ($this->value !== NULL && $this->value->isLValue())
+			return implode(':', $this->value->getLValueIdentifiers());
+		else
+			return NULL;
+	}
+	
 	abstract public function getFnCall();
 	
 }

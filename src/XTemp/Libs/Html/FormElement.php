@@ -106,10 +106,10 @@ class FormElement extends \XTemp\Tree\Element
 		if ($root instanceof InputField)
 		{
 			$id = $root->getId();
-			$expr = $root->getValue();
-			if ($expr && $expr->isLValue())
+			$expr = $root->getMappingValue();
+			if ($expr !== NULL)
 			{
-				return "$id=>'" . implode(':', $expr->getLValueIdentifiers()) . "',";
+				return "$id=>'$expr',";
 			}
 			return '';
 		}

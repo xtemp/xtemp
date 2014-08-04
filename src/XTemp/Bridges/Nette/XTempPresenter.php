@@ -6,6 +6,7 @@
 
 namespace XTemp\Bridges\Nette;
 
+use XTemp\InvalidExpressionException;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -64,20 +65,56 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	
 	//===========================================================================
 	
-	public function _xt_processForm($form)
+	public function _xt_processForm(XTempForm $form)
 	{
 		$mapping = $form->getMapping();
 		foreach ($form->getValues(TRUE) as $name => $value)
 		{
 			if (isset($mapping[$name]))
 			{
-				$prop = $mapping[$name];
-				$this->$prop = $value; //TODO i strukturovane hodnoty
+				$dest = $this->decodeMapping($mapping[$name]);
+				$obj = $dest[0];
+				$prop = $dest[1];
+				$obj->$prop = $value;
 			}
 		}
-		//TODO volat obsluznou metodu
-		//default redirect pokud obsluzna metoda neprovedla presmerovani
+		
+		//find and call the action method 
+		$btn = $form->isSubmitted();
+		if ($btn && $btn instanceof \Nette\ComponentModel\Component)
+		{
+			$name = $btn->getName();
+			if (isset($mapping[$name]))
+			{
+				$dest = $this->decodeMapping($mapping[$name]);
+				if (method_exists($dest[0], $dest[1]))
+				{
+					call_user_func($dest);
+				}
+				else
+					throw new \XTemp\InvalidExpressionException("Couldn't find callback method $dest[1]");
+			}
+		}
+		
+		//default redirect when the action method did not redirect
 		$this->redirect('this');
+	}
+	
+	protected function decodeMapping($str)
+	{
+		$p = explode(':', $str);
+		$srcobj = $this;
+		for ($i = 0; $i < count($p) - 1; $i++)
+		{
+			$prop = $p[$i];
+			if ($i === 0 && $prop == 'this')
+				$srcobj = $this;
+			else if (isset($srcobj->$prop))
+				$srcobj = $srcobj->$prop;
+			else
+				throw InvalidExpressionException("Couldn't find the property $prop in $str");
+		}
+		return array($srcobj, $p[$i]);
 	}
 	
 	//===========================================================================
