@@ -18,7 +18,6 @@ class XTempForm extends \Nette\Application\UI\Form
 	public function setMapping($mapping)
 	{
 		$this->mapping = $mapping;
-		$this->createFields();
 	}
 	
 	public function getMapping()
@@ -26,15 +25,4 @@ class XTempForm extends \Nette\Application\UI\Form
 		return $this->mapping;
 	}
 	
-	/**
-	 * Creates fake fileds for the mapping values in order to pass the values
-	 * correctly from HTTP to the form.
-	 */
-	protected function createFields()
-	{
-		foreach ($this->mapping as $name => $value)
-		{
-			$this->addText($name);
-		}
-	}
 }

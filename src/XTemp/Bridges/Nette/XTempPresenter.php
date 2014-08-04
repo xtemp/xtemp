@@ -42,17 +42,22 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	protected function createComponent($name)
 	{
 		$ret = parent::createComponent($name);
-		if ($this->signal !== NULL && !$ret)  //TODO detekovat, kdy se zpracovava signal, jinak to nedelat
+		if ($ret === NULL)
 		{
-			//the form doesn't exist: check if it was previously used in the template
-			$mapping = $this->loadMapping($name);
-			if ($mapping)
+			$ext = $this->getFormTempFile($name);
+			if (is_file($ext))
 			{
-				//the form mapping is known - it's a form defined in the template
-				$ret = new XTempForm($this, $name); //create an empty form for make the event processing work
+				include($ext);
+				$ret = _xt_create_form($this);
 				$ret->onSuccess[] = $this->_xt_processForm;
-				$ret->setMapping($mapping);
+				
+				$mapping = $this->loadMapping($name);
+				if ($mapping)
+				{
+					$ret->setMapping($mapping);
+				}
 			}
+			
 		}
 		return $ret;
 	}

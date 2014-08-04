@@ -204,8 +204,8 @@ class Expression
 	public static function isConstant($value)
 	{
 		$stats = new \stdClass();
-		self::translate($this->src, $stats);
-		return ($stats->nconts <= 1 && $stats->nexpr == 0);
+		self::translate($value, $stats);
+		return ($stats->nconst <= 1 && $stats->nexpr == 0);
 	}
 	
 }
