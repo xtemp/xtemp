@@ -14,9 +14,8 @@ class DecorateElement extends \XTemp\Libs\Ui\CompoundElementBase
 {
 	private $template;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->template = $this->requireAttrPlain('template');
 	}
 

@@ -15,12 +15,15 @@ abstract class Element extends Component
 	protected static $serialNum = 1;
 	protected $domElement;
 	protected $attributes;
+	protected $context;
 	
-	public function __construct($domElement)
+	public function __construct(\DOMElement $domElement, \XTemp\Context $context)
 	{
 		parent::__construct();
 		$this->domElement = $domElement;
+		$this->context = $context;
 		$this->loadAttributes();
+		$this->loadParams();
 	}
 	
 	public function toString()
@@ -91,6 +94,15 @@ abstract class Element extends Component
 	
 	//================================= Attribute Utilities ===========================================
 
+	/**
+	 * Loads the element parametres from the DOM attributes. The elements should
+	 * redefine this method in order to load their specific parametres. This is
+	 * called automatically when the Element is created.
+	 */
+	protected function loadParams()
+	{
+	}
+	
 	protected function loadAttributes()
 	{
 		$this->attributes = array();
@@ -103,6 +115,16 @@ abstract class Element extends Component
 		if (!isset($this->attributes['id']))
 			$this->attributes['id'] = Expression::translate($this->generateId());
 		return $this->attributes['id'];
+	}
+	
+	protected function checkIdPlain()
+	{
+		if ($this->domElement->hasAttribute('id'))
+			$id = $this->domElement->getAttribute('id');
+		else
+			$id = $this->generateId(); 
+		$this->attributes['id'] = $id;
+		return $id;
 	}
 	
 	protected function generateId()
@@ -190,7 +212,7 @@ abstract class Element extends Component
 		$this->getTree()->addDependency($file);
 		$src = file_get_contents($file);
 		//create a new tree from the template
-		$filter = new \XTemp\Filter();
+		$filter = new \XTemp\Filter($this->context);
 		$tempTree = $filter->buildTree($src, $file);
 		$filter->restructureTree($tempTree->getRoot());
 		return $tempTree;

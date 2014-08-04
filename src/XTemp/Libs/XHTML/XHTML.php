@@ -15,9 +15,9 @@ class XHTML extends \Xtemp\TagLib
 {
 	public static $xmlns = "http://www.w3.org/1999/xhtml";
 	
-	public function unknownElement($element)
+	public function unknownElement(\DOMElement $element, \XTemp\Context $context)
 	{
-		return new Element($element);
+		return new Element($element, $context);
 	}
 	
 }

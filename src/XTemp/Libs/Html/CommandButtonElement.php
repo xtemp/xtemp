@@ -14,9 +14,9 @@ class CommandButtonElement extends InputField
 {
 	private $action;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
+		parent::loadParams();
 		$this->action = $this->requireAttrPlain("action");
 	}
 

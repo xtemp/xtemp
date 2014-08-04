@@ -17,9 +17,8 @@ class ParamElement extends \XTemp\Tree\Element
 	private $value;
 	private $encoding;
 
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->name = $this->useAttrPlain('name', NULL);
 		$this->value = $this->requireAttrExpr('value');
 		$this->encoding = $this->useAttrExpr('encoding', 'string');

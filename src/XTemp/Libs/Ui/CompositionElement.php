@@ -14,9 +14,8 @@ class CompositionElement extends CompoundElementBase
 {
 	private $template;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->template = $this->useAttrPlain('template', null);
 	}
 	

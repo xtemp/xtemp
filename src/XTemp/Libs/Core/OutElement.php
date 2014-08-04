@@ -15,9 +15,8 @@ class OutElement extends \XTemp\Tree\Element
 	private $value;
 	private $escape;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->value = $this->requireAttrExpr('value');
 		$this->escape = $this->useAttrPlain('escapeXml', "true", array('true', 'false'));
 	}

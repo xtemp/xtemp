@@ -15,9 +15,9 @@ class InputTextElement extends InputField
 	private $required;
 	private $requiredMessage;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
+		parent::loadParams();
 		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
 		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
 	}

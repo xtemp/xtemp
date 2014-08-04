@@ -16,9 +16,11 @@ class Filter
 {
 	protected $namespaces;
 	protected $dependencies;
+	protected $context;
 	
-	public function __construct()
+	public function __construct(Context $context)
 	{
+		$this->context = $context;
 		$this->buildNamespaceTable();
 	}
 	
@@ -123,7 +125,7 @@ class Filter
 		{
 			$classname = $this->namespaces[$uri];
 			$taglib = new $classname;
-			return $taglib->create($element);
+			return $taglib->create($element, $this->context);
 		}
 		else
 		{

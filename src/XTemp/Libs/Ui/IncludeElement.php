@@ -14,9 +14,8 @@ class IncludeElement extends CompoundElementBase
 {
 	private $src;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->src = $this->requireAttrPlain('src');
 	}
 

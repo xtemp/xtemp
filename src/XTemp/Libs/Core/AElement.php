@@ -14,9 +14,8 @@ class AElement extends \XTemp\Tree\Element
 {
 	private $href;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->href = $this->requireAttrExpr('href');
 	}
 	

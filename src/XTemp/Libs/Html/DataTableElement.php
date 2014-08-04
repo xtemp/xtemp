@@ -19,9 +19,8 @@ class DataTableElement extends \XTemp\Tree\Element
 	private $columns;
 	private $other;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->value = $this->requireAttrExpr('value');
 		$this->varname = $this->requireAttrVar('var');
 	}

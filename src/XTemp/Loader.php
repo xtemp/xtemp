@@ -25,7 +25,10 @@ class Loader extends Latte\Loaders\FileLoader
 	public function __construct(Nette\Application\UI\Presenter $presenter)
 	{
 		$this->presenter = $presenter;
-		$this->filter = new Filter();
+		
+		$context = new Context();
+		$context->presenter = $this->presenter;
+		$this->filter = new Filter($context);
 		
 	    $params = $this->presenter->context->getParameters();
         $this->temp = $params['tempDir'] . "/cache/xtemp.deps/" . $this->presenter->name . "/";

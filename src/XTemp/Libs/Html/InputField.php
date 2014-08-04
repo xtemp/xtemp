@@ -15,11 +15,15 @@ abstract class InputField extends \XTemp\Tree\Element
 	protected $id;
 	protected $value;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->id = $this->checkId();
 		$this->value = $this->requireAttrExpr('value');
+	}
+	
+	public function getValue()
+	{
+		return $this->value;
 	}
 	
 	abstract public function getFnCall();

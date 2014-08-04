@@ -14,9 +14,8 @@ class ComponentElement extends \XTemp\Tree\Element
 {
 	private $name;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->name = $this->requireAttrExpr('name');
 	}
 	

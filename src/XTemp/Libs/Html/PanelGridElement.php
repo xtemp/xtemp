@@ -14,9 +14,8 @@ class PanelGridElement extends \XTemp\Tree\Element
 {
 	private $columns;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->columns = $this->requireAttrPlain('columns');
 	}
 

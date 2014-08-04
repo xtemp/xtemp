@@ -14,9 +14,8 @@ class ComponentElement extends \XTemp\Tree\Element
 {
 	private $rendered; 
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->checkId();
 		$this->rendered = $this->useAttrExpr('rendered', 'true');
 	}

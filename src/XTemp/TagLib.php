@@ -30,9 +30,10 @@ abstract class TagLib
 	 * </ol>
 	 * 
 	 * @param \DOMElement $element
+	 * @param Context $context
 	 * @return XTemp\Tree\Component the created component or NULL when the creation fails
 	 */
-	public function create($element)
+	public function create(\DOMElement $element, Context $context)
 	{
 		$name = $element->nodeName;
 		if (($pp = strpos($name, ':')) !== FALSE) //strip namespace from the tag name
@@ -43,7 +44,7 @@ abstract class TagLib
 		$call = array($this, $fname);
 		if (is_callable($call))
 		{
-			return call_user_func($call, $element);
+			return call_user_func($call, $element, $context);
 		}
 		else //try the class by name
 		{
@@ -56,17 +57,17 @@ abstract class TagLib
 			#echo "Exist " . $cname . ": " . class_exists($cname, TRUE). "<br>";
 			if (class_exists($cname, TRUE))
 			{
-				return new $cname($element);
+				return new $cname($element, $context);
 			}
 			else
 			{
 				//couldn't create the instance, use the fallback function
-				return $this->unknownElement($element);
+				return $this->unknownElement($element, $context);
 			}
 		}
 	}
 	
-	public function unknownElement($element)
+	public function unknownElement(\DOMElement $element, Context $context)
 	{
 		return null;
 	}

@@ -18,9 +18,8 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	private $columns;
 	private $other;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->for = $this->requireAttrExpr('for');
 		$this->value = $this->requireAttrExpr('value');
 	}

@@ -39,6 +39,42 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		);
 	}
 
+	protected function createComponent($name)
+	{
+		$ret = parent::createComponent($name);
+		if ($this->signal !== NULL && !$ret)  //TODO detekovat, kdy se zpracovava signal, jinak to nedelat
+		{
+			//the form doesn't exist: check if it was previously used in the template
+			$mapping = $this->loadMapping($name);
+			if ($mapping)
+			{
+				//the form mapping is known - it's a form defined in the template
+				$ret = new XTempForm($this, $name); //create an empty form for make the event processing work
+				$ret->onSuccess[] = $this->_xt_processForm;
+				$ret->setMapping($mapping);
+			}
+		}
+		return $ret;
+	}
+	
+	//===========================================================================
+	
+	public function _xt_processForm($form)
+	{
+		$mapping = $form->getMapping();
+		foreach ($form->getValues(TRUE) as $name => $value)
+		{
+			if (isset($mapping[$name]))
+			{
+				$prop = $mapping[$name];
+				$this->$prop = $value; //TODO i strukturovane hodnoty
+			}
+		}
+		//TODO volat obsluznou metodu
+		//default redirect pokud obsluzna metoda neprovedla presmerovani
+		$this->redirect('this');
+	}
+	
 	//===========================================================================
 	
 	public function getSessionProperties()
@@ -76,4 +112,30 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		}
 	}
 	
+	public function storeMapping($formId, $mapping)
+	{
+		$session = $this->getSession('XTemp/FormMapping');
+		$session->$formId = $mapping;
+	}
+	
+	public function loadMapping($formId)
+	{
+		$session = $this->getSession('XTemp/FormMapping');
+		return $session->$formId;
+	}
+
+	//===========================================================================
+	
+	public function getFormTempFile($formName)
+	{
+		$params = $this->context->getParameters();
+		$temp = $params['tempDir'] . "/cache/xtemp.forms/" . $this->name . "/";
+		if (!file_exists($temp))
+		{
+			if (!mkdir($temp, 0777, true))
+				throw new \RuntimeException("Unable to create cache directory '" . $temp . "'.");
+		}
+		$file = $temp . $formName . ".php";
+		return $file;
+	}
 }

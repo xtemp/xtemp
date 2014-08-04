@@ -16,10 +16,9 @@ class CallFunctionElement extends \XTemp\Tree\Element
 	private $params;
 	private $script;
 
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
-		$this->name = $this->useAttrExpr('name', NULL);
+			$this->name = $this->useAttrExpr('name', NULL);
 	}
 	
 	public function beforeRender()

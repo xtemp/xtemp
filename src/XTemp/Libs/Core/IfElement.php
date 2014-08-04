@@ -14,9 +14,8 @@ class IfElement extends \XTemp\Tree\Element
 {
 	private $cond;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->cond = $this->requireAttrExpr('test');
 	}
 	

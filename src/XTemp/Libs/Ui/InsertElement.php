@@ -14,9 +14,8 @@ class InsertElement extends \XTemp\Tree\Element
 {
 	private $name;
 	
-	public function __construct($domElement)
+	protected function loadParams()
 	{
-		parent::__construct($domElement);
 		$this->name = $this->requireAttrPlain('name');
 	}
 
