@@ -18,7 +18,7 @@ class FormElement extends \XTemp\Tree\Element
 	
 	protected function loadParams()
 	{
-		$this->id = $this->checkIdPlain();
+		$this->id = $this->checkIdConstant();
 		$this->fname = '_xt_frm_' . (FormElement::$formSn++);
 		
 	}

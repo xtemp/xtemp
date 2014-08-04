@@ -15,9 +15,12 @@ class Expression
 {
 	protected $src;
 	
+	protected $constant;
+	
 	public function __construct($src)
 	{
 		$this->src = $src;
+		$this->constant = FALSE;
 	}
 
 	public function toPHP()
@@ -61,12 +64,18 @@ class Expression
 	 *
 	 * @param unknown $expr        	
 	 */
-	public static function translate($expr) 
+	public static function translate($expr, $stats = NULL) 
 	{
 		$open = 0;
 		$state = 0; // 0 = out {}, 1 = in #{}, 2 = in ^{}
 		$buffer = '';
 		$ret = '';
+		
+		if ($stats !== NULL)
+		{
+			$stats->nconst = 0;
+			$stats->nexpr = 0;
+		}
 		
 		for($i = 0; $i < strlen ( $expr ); $i ++)
 		{
@@ -81,11 +90,17 @@ class Expression
 							$ret .= ".'$buffer'";
 						$buffer = '';
 						$state = ($c == '#') ? 1 : 2;
+						if ($stats != NULL)
+							$stats->nexpr++;
 						$open = 1;
 						$i ++; // skip {
 					} 
 					else
+					{
+						if ($stats !== NULL && $buffer === '')
+							$stats->nconst++;
 						$buffer .= $c;
+					}
 					break;
 				case 1:
 					if ($c == '}') 
@@ -179,6 +194,18 @@ class Expression
 	protected static function isVarName($name)
 	{
 		return (preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $name) === 1);
+	}
+	
+	/**
+	 * Checks whether the value is a constant (it contains no expressions).
+	 * @param unknown $value
+	 * @return boolean
+	 */
+	public static function isConstant($value)
+	{
+		$stats = new \stdClass();
+		self::translate($this->src, $stats);
+		return ($stats->nconts <= 1 && $stats->nexpr == 0);
 	}
 	
 }

@@ -117,14 +117,25 @@ abstract class Element extends Component
 		return $this->attributes['id'];
 	}
 	
-	protected function checkIdPlain()
+	protected function checkIdConstant()
 	{
 		if ($this->domElement->hasAttribute('id'))
-			$id = $this->domElement->getAttribute('id');
+		{
+			$val = $this->domElement->getAttribute('id');
+			if (Expression::isConstant($val))
+			{
+				$this->attributes['id'] = Expression::translate($val);
+				return $val;
+			}
+			else
+				throw \XTemp\InvalidExpressionException("No expressions allowed in the ID attribute of this element");
+		}
 		else
-			$id = $this->generateId(); 
-		$this->attributes['id'] = $id;
-		return $id;
+		{
+			$val = $this->generateId();
+			$this->attributes['id'] = Expression::translate($val);
+			return $val;
+		}
 	}
 	
 	protected function generateId()
