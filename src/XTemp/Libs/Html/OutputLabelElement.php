@@ -15,8 +15,7 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	private $for;
 	private $value;
 	
-	private $columns;
-	private $other;
+	private $partial = FALSE;
 	
 	protected function loadParams()
 	{
@@ -34,6 +33,11 @@ class OutputLabelElement extends \XTemp\Tree\Element
 		return $this->value->toPHP();
 	}
 	
+	public function setPartial($bool)
+	{
+		$this->partial = $bool;
+	}
+	
 	public function beforeRender()
 	{
 		parent::beforeRender();
@@ -41,7 +45,10 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+		if ($this->partial)
+			return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+		else
+			return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
 	}
 	
 }

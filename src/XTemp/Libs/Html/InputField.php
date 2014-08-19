@@ -26,6 +26,10 @@ abstract class InputField extends \XTemp\Tree\Element
 		return $this->value;
 	}
 	
+	public function setLabel(OutputLabelElement $label)
+	{
+	}
+	
 	/**
 	 * Returns the LValue mapped to this input field
 	 * @return string the LValue map string or NULL when no mapping is available

@@ -15,6 +15,8 @@ class FormElement extends \XTemp\Tree\Element
 {
 	private static $formSn = 1;
 	private $id;
+	//internal label map
+	private $labels; 
 	
 	protected function loadParams()
 	{
@@ -67,6 +69,7 @@ class FormElement extends \XTemp\Tree\Element
 	{
 		if ($root instanceof OutputLabelElement)
 		{
+			$this->labels[$root->getFor()] = $root;
 			return '$labels[' . $root->getFor() . '] = ' . $root->getValue() . ";\n";
 		}
 		else if ($root instanceof InputField)
@@ -90,6 +93,9 @@ class FormElement extends \XTemp\Tree\Element
 		}
 		else if ($root instanceof InputField)
 		{
+			$id = $root->getId();
+			if (isset($this->labels[$id]))
+				$root->setLabel($this->labels[$id]);
 			return '$form->' . $root->getFnCall() . ";\n";
 		}
 		else
