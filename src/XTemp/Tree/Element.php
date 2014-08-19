@@ -207,6 +207,15 @@ abstract class Element extends Component
 			throw new \XTemp\MissingAttributeException("Attribute '$name' requires a variable name");
 	}
 
+	protected function useAttrVar($name, $default)
+	{
+		$v = $this->useAttrPlain($name, $default);
+		if ($v === $default || $this->isVarName($v))
+			return $v;
+		else
+			throw new \XTemp\MissingAttributeException("Attribute '$name' requires a variable name");
+	}
+
 	protected function isVarName($name)
 	{
 		return (preg_match('/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $name) === 1);

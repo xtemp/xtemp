@@ -7,6 +7,7 @@
 namespace XTemp\Bridges\Nette;
 
 use XTemp\Filter;
+use XTemp\Context;
 
 /**
  * A presenter used to server component's additional resources (scripts, css, etc.)
@@ -36,7 +37,7 @@ class ResourcePresenter extends XTempPresenter
 	public function startup()
 	{
 		parent::startup();
-		$filter = new Filter();
+		$filter = new Filter(new Context());
 		$this->paths = $filter->getResourcePaths();
 	}
 	
