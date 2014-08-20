@@ -146,7 +146,7 @@ class Expression
 					break;
 			}
 		}
-		if ($buffer)
+		if ($buffer || !$ret)
 			$ret .= ".'$buffer'";
 		
 		return substr ( $ret, 1 ); // omit the leading '.'

@@ -16,7 +16,7 @@ class TableColumnElement extends \XTemp\Tree\Element
 	
 	protected function loadParams()
 	{
-		$this->headerText = $this->requireAttrExpr('headerText');
+		$this->headerText = $this->useAttrExpr('headerText', '');
 	}
 	
 	public function render()
