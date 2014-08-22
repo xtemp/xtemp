@@ -10,7 +10,7 @@ namespace XTemp\Libs\Html;
  *
  * @author      burgetr
  */
-abstract class InputField extends \XTemp\Tree\Element
+abstract class InputField extends FormField
 {
 	protected $id;
 	protected $value;
@@ -28,6 +28,24 @@ abstract class InputField extends \XTemp\Tree\Element
 	
 	public function setLabel(OutputLabelElement $label)
 	{
+	}
+
+	public function render()
+	{
+		if ($this->form->inPhpMode())
+			return $this->renderPhpControl();
+		else
+			return '{input ' . $this->id . '}';
+	}
+	
+	public function renderPhpControl()
+	{
+		$ret = "<?php ";
+		$ret .= '$presenter->addToRenderedFormCall(\''; 
+		$ret .= addslashes('$form->' . $this->getFnCall() . ';');
+		$ret .= "');";
+		$ret .= "?>\n";
+		return $ret;
 	}
 	
 	/**

@@ -27,11 +27,6 @@ class SelectBooleanCheckboxElement extends InputField
 		parent::beforeRender();
 	}
 	
-	public function render()
-	{
-		return '{input ' . $this->id . ':}';
-	}
-	
 	public function getFnCall()
 	{
 		$lbl = '$labels[' . $this->id . ']';

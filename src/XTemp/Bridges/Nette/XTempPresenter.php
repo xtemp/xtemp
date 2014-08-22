@@ -14,6 +14,9 @@ use XTemp\InvalidExpressionException;
  */
 class XTempPresenter extends \Nette\Application\UI\Presenter
 {
+	protected $_xt_formName;
+	protected $_xt_formCode1;
+	protected $_xt_formCode2;
 	
 	public function startup()
 	{
@@ -180,4 +183,49 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$file = $temp . $formName . ".php";
 		return $file;
 	}
+	
+	public function startFormRendering($formName)
+	{
+		$this->_xt_formName = $formName;
+		$this->_xt_formCode1 = '';
+		$this->_xt_formCode2 = '';
+	}
+	
+	protected function formRenderingPrefix()
+	{
+		$ret = "<?php\n";
+		$ret .= 'function _xt_create_form($presenter){' . "\n";
+		$ret .= '$labels = array();';
+		$ret .= '$form = new \XTemp\Bridges\Nette\XTempForm;';
+		return $ret;
+	}
+	
+	protected function formRenderingSuffix()
+	{
+		$ret = '';
+		$ret .= 'return $form;';
+		$ret .= "}\n";
+		return $ret;
+	}
+	
+	public function addToRenderedFormInit($code)
+	{
+		$this->_xt_formCode1 .= $code;
+	}
+	
+	public function addToRenderedFormCall($code)
+	{
+		$this->_xt_formCode2 .= $code;
+	}
+	
+	public function finishFormRendering()
+	{
+		$file = $this->getFormTempFile($this->_xt_formName);
+		$code = $this->formRenderingPrefix()
+				. $this->_xt_formCode1
+				. $this->_xt_formCode2
+				. $this->formRenderingSuffix();
+		file_put_contents($file, $code);
+	}
+	
 }

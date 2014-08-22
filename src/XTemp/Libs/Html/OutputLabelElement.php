@@ -10,7 +10,7 @@ namespace XTemp\Libs\Html;
  *
  * @author      burgetr
  */
-class OutputLabelElement extends \XTemp\Tree\Element
+class OutputLabelElement extends FormField
 {
 	private $for;
 	private $value;
@@ -45,10 +45,27 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		if ($this->partial)
-			return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+		if ($this->form->inPhpMode())
+			return $this->renderDeclaration();
 		else
-			return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+		{
+			if ($this->partial)
+				return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+			else
+				return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+		}
+	}
+	
+	protected function renderDeclaration()
+	{
+		$decl = '$labels[' . $this->getFor() . '] = ' . $this->getValue() . ";";
+		
+		$ret = "<?php ";
+		$ret .= '$presenter->addToRenderedFormInit(\'';
+		$ret .= addslashes($decl);
+		$ret .= "');";
+		$ret .= "?>\n";
+		return $ret;
 	}
 	
 }

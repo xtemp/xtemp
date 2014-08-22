@@ -25,11 +25,6 @@ class CommandButtonElement extends InputField
 		parent::beforeRender();
 	}
 	
-	public function render()
-	{
-		return '{input ' . $this->id . '}';
-	}
-	
 	public function getAction()
 	{
 		return $this->action;
