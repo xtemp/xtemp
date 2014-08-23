@@ -27,16 +27,14 @@ class SelectBooleanCheckboxElement extends InputField
 		parent::beforeRender();
 	}
 	
-	public function getFnCall()
+	public static function addToForm($form, $name, $label, $value)
 	{
-		$lbl = '$labels[' . $this->id . ']';
-		$ret = 'addCheckbox(' . $this->id . ", isset($lbl)?$lbl:'')";
-		$ret .= '->setValue(' . $this->value->toPHP() . ')';
-		if ($this->required == "true")
+		$f = $form->addCheckbox($name, $label);
+		$f->setValue($value);
+		/*if ($this->required == "true")
 		{
-			$ret .= '->setRequired(' . $this->requiredMessage->toPHP() . ')';
-		}
-		return $ret;
+			$f->setRequired(' . $this->requiredMessage->toPHP() . ')';
+		}*/
 	}
 	
 	public function setLabel(OutputLabelElement $label)

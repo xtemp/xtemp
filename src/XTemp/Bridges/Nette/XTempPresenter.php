@@ -14,9 +14,11 @@ use XTemp\InvalidExpressionException;
  */
 class XTempPresenter extends \Nette\Application\UI\Presenter
 {
+	/** @SessionScoped */
+	protected $_xt_forms;
+	
 	protected $_xt_formName;
-	protected $_xt_formCode1;
-	protected $_xt_formCode2;
+	
 	
 	public function startup()
 	{
@@ -45,23 +47,20 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 
 	protected function createComponent($name)
 	{
+		echo "creating $name";
 		$ret = parent::createComponent($name);
 		if ($ret === NULL)
 		{
-			$ext = $this->getFormTempFile($name);
-			if (is_file($ext))
+			if (isset($this->_xt_forms[$name]))
 			{
-				include($ext);
-				$ret = _xt_create_form($this);
-				$ret->onSuccess[] = $this->_xt_processForm;
-				
-				$mapping = $this->loadMapping($name);
-				if ($mapping)
-				{
-					$ret->setMapping($mapping);
-				}
+				echo "Reconstruct<pre>";
+				print_r($this->_xt_forms[$name]);
+				echo "</pre>";
+				$ret = XTempForm::constructForm($this, $this->_xt_forms[$name]);
 			}
-			
+			else
+				echo "not found " . count($this->_xt_forms);
+				
 		}
 		return $ret;
 	}
@@ -187,8 +186,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	public function startFormRendering($formName)
 	{
 		$this->_xt_formName = $formName;
-		$this->_xt_formCode1 = '';
-		$this->_xt_formCode2 = '';
+		$this->_xt_forms[$formName] = new FormDef();
 	}
 	
 	protected function formRenderingPrefix()
@@ -208,24 +206,21 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		return $ret;
 	}
 	
-	public function addToRenderedFormInit($code)
+	public function addFormLabel($name, $text)
 	{
-		$this->_xt_formCode1 .= $code;
+		$this->_xt_forms[$this->_xt_formName]->labels[$name] = $text;
 	}
 	
-	public function addToRenderedFormCall($code)
+	public function addFormField($name, $type, $mapping, $default)
 	{
-		$this->_xt_formCode2 .= $code;
+		$def = $this->_xt_forms[$this->_xt_formName];
+		$def->types[$name] = $type;
+		$def->mappings[$name] = $mapping;
+		$def->values[$name] = $default;
 	}
 	
 	public function finishFormRendering()
 	{
-		$file = $this->getFormTempFile($this->_xt_formName);
-		$code = $this->formRenderingPrefix()
-				. $this->_xt_formCode1
-				. $this->_xt_formCode2
-				. $this->formRenderingSuffix();
-		file_put_contents($file, $code);
 	}
 	
 }

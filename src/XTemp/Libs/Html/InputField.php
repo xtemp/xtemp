@@ -41,9 +41,11 @@ abstract class InputField extends FormField
 	public function renderPhpControl()
 	{
 		$ret = "<?php ";
-		$ret .= '$presenter->addToRenderedFormCall(\''; 
-		$ret .= addslashes('$form->' . $this->getFnCall() . ';');
-		$ret .= "');";
+		$ret .= '$presenter->addFormField(';
+		$ret .= $this->id . ',';
+		$ret .= "'" . get_called_class() . "',";
+		$ret .= "'" . $this->getMappingValue() . "',";
+		$ret .= $this->getValue()->toPHP() . ');';
 		$ret .= "?>\n";
 		return $ret;
 	}
@@ -59,7 +61,5 @@ abstract class InputField extends FormField
 		else
 			return NULL;
 	}
-	
-	abstract public function getFnCall();
 	
 }

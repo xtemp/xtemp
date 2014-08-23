@@ -58,12 +58,9 @@ class OutputLabelElement extends FormField
 	
 	protected function renderDeclaration()
 	{
-		$decl = '$labels[' . $this->getFor() . '] = ' . $this->getValue() . ";";
-		
 		$ret = "<?php ";
-		$ret .= '$presenter->addToRenderedFormInit(\'';
-		$ret .= addslashes($decl);
-		$ret .= "');";
+		$ret .= '$presenter->addFormLabel('
+				. $this->for->toPHP() . ',' . $this->value->toPHP() . ');';
 		$ret .= "?>\n";
 		return $ret;
 	}

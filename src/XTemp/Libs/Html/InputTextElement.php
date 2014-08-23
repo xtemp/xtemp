@@ -27,6 +27,14 @@ class InputTextElement extends InputField
 		parent::beforeRender();
 	}
 	
+	public static function addToForm($form, $name, $label, $value)
+	{
+		$f = $form->addText($name, $label);
+		if ($value)
+			$f->setValue($value);
+	}
+	
+	
 	public function getFnCall()
 	{
 		$lbl = '$labels[' . $this->id . ']';

@@ -38,9 +38,9 @@ class CommandButtonElement extends InputField
 			return NULL;
 	}
 	
-	public function getFnCall()
+	public static function addToForm($form, $name, $label, $value)
 	{
-		$ret = 'addSubmit(' . $this->id . ", " . $this->value->toPHP() .")";
-		return $ret;
+		$form->addSubmit($name, $value);
 	}
+	
 }
