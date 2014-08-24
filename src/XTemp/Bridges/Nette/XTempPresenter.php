@@ -19,6 +19,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	 * @var array
 	 */
 	protected $_xt_forms;
+	
 	/**
 	 * Name of the form currently being created.
 	 * @var unknown
@@ -163,18 +164,6 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		}
 	}
 	
-	/*public function storeMapping($formId, $mapping)
-	{
-		$session = $this->getSession('XTemp/FormMapping');
-		$session->$formId = $mapping;
-	}
-	
-	public function loadMapping($formId)
-	{
-		$session = $this->getSession('XTemp/FormMapping');
-		return $session->$formId;
-	}*/
-
 	public function saveSessionForms()
 	{
 		$session = $this->getSession('XTemp/Forms');
@@ -188,19 +177,6 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	}
 
 	//===========================================================================
-	
-	public function getFormTempFile($formName)
-	{
-		$params = $this->context->getParameters();
-		$temp = $params['tempDir'] . "/cache/xtemp.forms/" . $this->name . "/";
-		if (!file_exists($temp))
-		{
-			if (!mkdir($temp, 0777, true))
-				throw new \RuntimeException("Unable to create cache directory '" . $temp . "'.");
-		}
-		$file = $temp . $formName . ".php";
-		return $file;
-	}
 	
 	public function startFormRendering($formName)
 	{
