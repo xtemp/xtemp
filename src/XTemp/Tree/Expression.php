@@ -108,7 +108,7 @@ class Expression
 						if ($open == 1) 
 						{
 							if ($buffer)
-								$ret .= ".$buffer";
+								$ret .= ".($buffer)";
 							$buffer = '';
 							$state = 0;
 						} else

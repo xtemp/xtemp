@@ -26,6 +26,12 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	 */
 	protected $_xt_formName;
 	
+	/**
+	 * Saved element id generation status 
+	 * @var unknown
+	 */
+	protected $_xt_id_status;
+	
 	
 	public function startup()
 	{
@@ -80,7 +86,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$mapping = $form->getMapping();
 		foreach ($form->getValues(TRUE) as $name => $value)
 		{
-			if (isset($mapping[$name]))
+			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
 				$dest = $this->decodeMapping($mapping[$name]);
 				$obj = $dest[0];
@@ -94,7 +100,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		if ($btn && $btn instanceof \Nette\ComponentModel\Component)
 		{
 			$name = $btn->getName();
-			if (isset($mapping[$name]))
+			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
 				$dest = $this->decodeMapping($mapping[$name]);
 				if (method_exists($dest[0], $dest[1]))
@@ -166,13 +172,13 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	
 	public function saveSessionForms()
 	{
-		$session = $this->getSession('XTemp/Forms');
+		$session = $this->getSession('XTemp/Forms/' . $this->getName());
 		$session->forms = $this->_xt_forms;
 	}
 	
 	public function restoreSessionForms()
 	{
-		$session = $this->getSession('XTemp/Forms');
+		$session = $this->getSession('XTemp/Forms/' . $this->getName());
 		$this->_xt_forms = $session->forms;
 	}
 
@@ -182,23 +188,10 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$this->_xt_formName = $formName;
 		$this->_xt_forms[$formName] = new FormDef();
-	}
-	
-	protected function formRenderingPrefix()
-	{
-		$ret = "<?php\n";
-		$ret .= 'function _xt_create_form($presenter){' . "\n";
-		$ret .= '$labels = array();';
-		$ret .= '$form = new \XTemp\Bridges\Nette\XTempForm;';
-		return $ret;
-	}
-	
-	protected function formRenderingSuffix()
-	{
-		$ret = '';
-		$ret .= 'return $form;';
-		$ret .= "}\n";
-		return $ret;
+		//save the ID generation status: we want to reset it back after rendering
+		$this->_xt_id_status = \XTemp\Tree\Element::$serialNum;
+		//no ouput during the form definition rendering
+		ob_start();
 	}
 	
 	public function addFormLabel($name, $text)
@@ -217,6 +210,10 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	public function finishFormRendering()
 	{
 		$this->saveSessionForms();
+		//restre the ID generation status
+		\XTemp\Tree\Element::$serialNum = $this->_xt_id_status;
+		//re-enable PHP output
+		ob_clean();
 	}
 	
 }

@@ -15,6 +15,7 @@ class DataTableElement extends \XTemp\Tree\Element
 {
 	private $value;
 	private $varname;
+	private $varStatus;
 	
 	private $columns;
 	private $other;
@@ -23,6 +24,7 @@ class DataTableElement extends \XTemp\Tree\Element
 	{
 		$this->value = $this->requireAttrExpr('value');
 		$this->varname = $this->requireAttrVar('var');
+		$this->varStatus = $this->useAttrVar('varStatus', NULL);
 	}
 
 	public function beforeRender()
@@ -64,6 +66,8 @@ class DataTableElement extends \XTemp\Tree\Element
 		//the columns
 		$ret .= "<tbody>\n";
 		$ret .= '{foreach ' . $this->value->toPHP() . ' as ' . $this->varname . "}\n";
+		if ($this->varStatus !== NULL && $this->varStatus != '$iterator')
+			$ret .= "{var {$this->varStatus}=\$iterator}";
 		$ret .= '<tr>';
 		foreach ($this->columns as $col)
 		{
