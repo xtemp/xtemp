@@ -14,9 +14,15 @@ use XTemp\InvalidExpressionException;
  */
 class XTempPresenter extends \Nette\Application\UI\Presenter
 {
-	/** @SessionScoped */
+	/**
+	 * Forms created from templates and stored in session.
+	 * @var array
+	 */
 	protected $_xt_forms;
-	
+	/**
+	 * Name of the form currently being created.
+	 * @var unknown
+	 */
 	protected $_xt_formName;
 	
 	
@@ -25,6 +31,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		parent::startup();
 		$this->template->getLatte()->setLoader(new \XTemp\Loader($this));
 		$this->restoreSessionProperties();
+		$this->restoreSessionForms();
 	}
 	
 	public function shutdown($response)
@@ -47,16 +54,16 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 
 	protected function createComponent($name)
 	{
-		echo "creating $name";
 		$ret = parent::createComponent($name);
 		if ($ret === NULL)
 		{
 			if (isset($this->_xt_forms[$name]))
 			{
-				echo "Reconstruct<pre>";
+				/*echo "Reconstruct<pre>";
 				print_r($this->_xt_forms[$name]);
-				echo "</pre>";
+				echo "</pre>";*/
 				$ret = XTempForm::constructForm($this, $this->_xt_forms[$name]);
+				$ret->onSuccess[] = $this->_xt_processForm;
 			}
 			else
 				echo "not found " . count($this->_xt_forms);
@@ -156,7 +163,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		}
 	}
 	
-	public function storeMapping($formId, $mapping)
+	/*public function storeMapping($formId, $mapping)
 	{
 		$session = $this->getSession('XTemp/FormMapping');
 		$session->$formId = $mapping;
@@ -166,6 +173,18 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$session = $this->getSession('XTemp/FormMapping');
 		return $session->$formId;
+	}*/
+
+	public function saveSessionForms()
+	{
+		$session = $this->getSession('XTemp/Forms');
+		$session->forms = $this->_xt_forms;
+	}
+	
+	public function restoreSessionForms()
+	{
+		$session = $this->getSession('XTemp/Forms');
+		$this->_xt_forms = $session->forms;
 	}
 
 	//===========================================================================
@@ -221,6 +240,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	
 	public function finishFormRendering()
 	{
+		$this->saveSessionForms();
 	}
 	
 }
