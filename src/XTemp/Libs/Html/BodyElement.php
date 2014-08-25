@@ -15,7 +15,12 @@ class BodyElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		return $this->renderStartElement() . $this->renderChildren() . $this->renderEndElement();
+		$ret = $this->renderStartElement();
+		$ret .= '{var $_xt_ctx = new \XTemp\Tree\TemplateContext($presenter)}';
+		$ret .= $this->renderChildren();
+		$ret .= $this->renderEndElement();
+		
+		return $ret;
 	}
 	
 }

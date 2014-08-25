@@ -155,13 +155,17 @@ class Expression
 	public static function translateLValue($value)
 	{
 		$ids = self::parseLValue($value);
-		if ($ids === NULL)
+		if ($ids === NULL || count($ids) === 0)
 		{
 			throw new \XTemp\InvalidExpressionException("Invalid LValue expression '$value'");
 		}
 		else
 		{
-			return '$presenter->' . implode('->', $ids);
+			$root = $ids[0];
+			$expr = '$_xt_ctx->map(\'' . $root . '\')';
+			if (count($ids) > 1)
+				$expr .= '->' . implode('->', array_slice($ids, 1));
+			return $expr;
 		}
 	}
 	
