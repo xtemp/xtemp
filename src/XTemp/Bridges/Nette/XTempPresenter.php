@@ -199,12 +199,13 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$this->_xt_forms[$this->_xt_formName]->labels[$name] = $text;
 	}
 	
-	public function addFormField($name, $type, $mapping, $default)
+	public function addFormField($name, $type, $mapping, $default, $params)
 	{
 		$def = $this->_xt_forms[$this->_xt_formName];
 		$def->types[$name] = $type;
 		$def->mappings[$name] = $mapping;
 		$def->values[$name] = $default;
+		$def->params[$name] = $params;
 	}
 	
 	public function finishFormRendering()

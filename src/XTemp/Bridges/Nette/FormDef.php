@@ -18,6 +18,8 @@ class FormDef
 	public $types;
 	/** Default values (name=>value) */
 	public $values;
+	/** Additional parametres (name=>array) */
+	public $params;
 	/** Field mapping (name=>mapping) */
 	public $mappings;
 	
@@ -26,6 +28,7 @@ class FormDef
 		$this->labels = array();
 		$this->types = array();
 		$this->values = array();
+		$this->params = array();
 		$this->mappings = array();
 	}
 }

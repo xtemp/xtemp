@@ -33,7 +33,7 @@ class XTempForm extends \Nette\Application\UI\Form
 		foreach ($def->types as $name => $type)
 		{
 			$label = isset($def->labels[$name]) ? $def->labels[$name] : '';
-			call_user_func("$type::addToForm", $form, $name, $label, $def->values[$name]);
+			call_user_func("$type::addToForm", $form, $name, $label, $def->values[$name], $def->params[$name]);
 		}
 		$form->setMapping($def->mappings);
 		return $form;

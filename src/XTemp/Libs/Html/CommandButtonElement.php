@@ -20,11 +20,6 @@ class CommandButtonElement extends InputField
 		$this->action = $this->requireAttrExpr("action");
 	}
 
-	public function beforeRender()
-	{
-		parent::beforeRender();
-	}
-	
 	public function getAction()
 	{
 		return $this->action;
@@ -38,7 +33,7 @@ class CommandButtonElement extends InputField
 			return NULL;
 	}
 	
-	public static function addToForm($form, $name, $label, $value)
+	public static function addToForm($form, $name, $label, $value, $params)
 	{
 		$form->addSubmit($name, $value);
 	}
