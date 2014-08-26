@@ -57,21 +57,39 @@ class TemplateContext
 	 */
 	public function find($root)
 	{
+		$prop = $root;
+		$idx = '';
+		//locate the array index if used
+		$p1 = strpos($prop, '[');
+		$p2 = strpos($prop, ']');
+		if ($p1 !== FALSE && $p2 !== FALSE && $p2 > $p1)
+		{
+			$idx = substr($prop, $p1+1, $p2 - $p1 - 1);
+			$prop = substr($prop, 0, $p1);
+		}
+			
 		//try to find the mapping for the variable in the stack
 		$mapping = NULL;
 		for ($i = count($this->varStack) - 1; $i >= 0; $i--)
 		{
 			$map = $this->varStack[$i];
-			if (isset($map[$root]))
+			if (isset($map[$prop]))
 			{
-				$mapping = $map[$root];
+				$mapping = $map[$prop];
 				break;
 			}
 		}
+		
+		$ret = NULL;
 		if ($mapping !== NULL)
-			return $mapping;
+			$ret = $mapping; //found in local scope, return the value found
 		else
-			return $this->presenter->$root;
+			$ret = $this->presenter->$prop; //not found in local scope, try the presenter
+		
+		if ($idx !== '') //if the index is defined, use it
+			$ret = $ret[$idx];
+		
+		return $ret;
 	}
 	
 	/**

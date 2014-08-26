@@ -91,7 +91,13 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 				$dest = $this->decodeMapping($mapping[$name]);
 				$obj = $dest[0];
 				$prop = $dest[1];
-				$obj->$prop = $value;
+				$idx = $dest[2];
+				//echo "prop=$prop and idx=$idx and value=$value<br>";
+				
+				if ($idx === '')
+					$obj->$prop = $value;
+				else
+					$obj->{$prop}[$idx] = $value;
 			}
 		}
 		
@@ -102,7 +108,8 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 			$name = $btn->getName();
 			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
-				$dest = $this->decodeMapping($mapping[$name]);
+				$destm = $this->decodeMapping($mapping[$name]);
+				$dest = array($destm[0], $destm[1]); //omit the eventual index
 				if (method_exists($dest[0], $dest[1]))
 				{
 					call_user_func($dest);
@@ -120,7 +127,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$p = explode(':', $str);
 		$srcobj = $this;
-		for ($i = 0; $i < count($p) - 1; $i++)
+		for ($i = 0; $i < count($p); $i++)
 		{
 			$prop = $p[$i];
 			$idx = '';
@@ -134,21 +141,25 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 				$prop = substr($prop, 0, $p1);
 			}
 			
-			//reach the right property
-			if ($i === 0 && $prop == 'this')
-				$srcobj = $this;
-			else if (isset($srcobj->$prop))
-				$srcobj = $srcobj->$prop;
-			else
-				throw new InvalidExpressionException("Couldn't find the property $prop from $str in the presenter");
-			
-			//reach the index if used
-			if ($idx !== '')
+			if ($i < count($p) - 1)
 			{
-				$srcobj = $srcobj[$idx];
+				//reach the right property
+				if ($i === 0 && $prop == 'this')
+					$srcobj = $this;
+				else if (isset($srcobj->$prop))
+					$srcobj = $srcobj->$prop;
+				else
+					throw new InvalidExpressionException("Couldn't find the property $prop from $str in the presenter");
+				
+				//reach the index if used
+				if ($idx !== '')
+				{
+					$srcobj = $srcobj[$idx];
+				}
 			}
+			
 		}
-		return array($srcobj, $p[$i]);
+		return array($srcobj, $prop, $idx);
 	}
 	
 	//===========================================================================
