@@ -123,12 +123,30 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		for ($i = 0; $i < count($p) - 1; $i++)
 		{
 			$prop = $p[$i];
+			$idx = '';
+			
+			//locate the array index if used
+			$p1 = strpos($prop, '[');
+			$p2 = strpos($prop, ']');
+			if ($p1 !== FALSE && $p2 !== FALSE && $p2 > $p1)
+			{
+				$idx = substr($prop, $p1+1, $p2 - $p1 - 1);
+				$prop = substr($prop, 0, $p1);
+			}
+			
+			//reach the right property
 			if ($i === 0 && $prop == 'this')
 				$srcobj = $this;
 			else if (isset($srcobj->$prop))
 				$srcobj = $srcobj->$prop;
 			else
-				throw InvalidExpressionException("Couldn't find the property $prop in $str");
+				throw new InvalidExpressionException("Couldn't find the property $prop from $str in the presenter");
+			
+			//reach the index if used
+			if ($idx !== '')
+			{
+				$srcobj = $srcobj[$idx];
+			}
 		}
 		return array($srcobj, $p[$i]);
 	}

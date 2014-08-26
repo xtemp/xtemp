@@ -55,7 +55,7 @@ abstract class InputField extends FormField
 		$ret .= '$presenter->addFormField(';
 		$ret .= $this->id . ',';
 		$ret .= "'" . get_called_class() . "',";
-		$ret .= "'" . $this->getMappingValue() . "',";
+		$ret .= '$_xt_ctx->map("' . $this->getMappingValue() . "\"),";
 		$ret .= $this->getValue()->toPHP() . ',';
 		$ret .= 'array(' . $req . '));';
 		$ret .= "?>\n";
@@ -82,6 +82,6 @@ abstract class InputField extends FormField
 	 * @param string $value Default value
 	 * @param array $params Additional parametres (array)
 	 */
-	abstract public static function addToForm($form, $name, $label, $value, $params);
+	//abstract public static function addToForm($form, $name, $label, $value, $params);
 	
 }

@@ -51,6 +51,15 @@ class Expression
 			return NULL;
 	}
 	
+	public function getLValueIdString()
+	{
+		if ($this->isLValue())
+			return implode(':', $this->getLValueIdentifiers());
+		else
+			return NULL;
+	}
+	
+	
 	//=========================================================================
 	
 	/**
@@ -162,7 +171,7 @@ class Expression
 		else
 		{
 			$root = $ids[0];
-			$expr = '$_xt_ctx->map(\'' . $root . '\')';
+			$expr = '$_xt_ctx->find("' . $root . '")';
 			if (count($ids) > 1)
 				$expr .= '->' . implode('->', array_slice($ids, 1));
 			return $expr;
