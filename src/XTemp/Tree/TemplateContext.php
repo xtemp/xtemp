@@ -7,6 +7,8 @@
 namespace XTemp\Tree;
 
 /**
+ * This class represents a rendering context within a rendered template. It holds the local
+ * variables and their eventual mapping to presenter properties.
  * 
  * @author      burgetr
  */
@@ -25,18 +27,34 @@ class TemplateContext
 		$this->varStack = array();
 	}
 	
+	/**
+	 * Opens a new scope level with the given base mapping string and the mapped local variables.
+	 * @param unknown $mapping the base mapping string for the variables in this scope
+	 * @param unknown $vars the variables mapping (name=>contents)
+	 */
 	public function open($mapping, $vars)
 	{
 		array_push($this->mapStack, $mapping);
 		array_push($this->varStack, $vars);
 	}
 	
+	/**
+	 * Closes the topmnost scope level.
+	 */
 	public function close()
 	{
 		array_pop($this->mapStack);
 		array_pop($this->varStack);
 	}
 	
+	/**
+	 * Finds and returns a variable in all the scope levels. If the variable is not found
+	 * (no local scope contains the variable), the corresponding presenter property is
+	 * returned instead.
+	 * 
+	 * @param unknown $root the variable name
+	 * @return unknown the located variable or presenter property
+	 */
 	public function find($root)
 	{
 		//try to find the mapping for the variable in the stack
@@ -56,6 +74,12 @@ class TemplateContext
 			return $this->presenter->$root;
 	}
 	
+	/**
+	 * Computes the complete mapping taking into account the local variables.
+	 * 
+	 * @param unknown $mapping the mapping
+	 * @return string|unknown the resulting mapping
+	 */
 	public function map($mapping)
 	{
 		$ctxmap = NULL;
@@ -74,7 +98,6 @@ class TemplateContext
 				}
 			}
 		}
-		
 		if ($ctxmap !== NULL)
 			return $ctxmap . ':' . implode(':', array_slice($mapids, 1));
 		else
