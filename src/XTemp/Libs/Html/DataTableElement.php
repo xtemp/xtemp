@@ -18,6 +18,7 @@ class DataTableElement extends \XTemp\Tree\Element
 	private $value;
 	private $varname;
 	private $varStatus;
+	private $varIndex;
 	
 	private $columns;
 	private $other;
@@ -27,6 +28,7 @@ class DataTableElement extends \XTemp\Tree\Element
 		$this->value = $this->requireAttrExpr('value');
 		$this->varname = $this->requireAttrVar('var');
 		$this->varStatus = $this->useAttrVar('varStatus', NULL);
+		$this->varIndex = $this->useAttrVar('varIndex', NULL);
 	}
 
 	public function beforeRender()
@@ -103,6 +105,8 @@ class DataTableElement extends \XTemp\Tree\Element
 		}
 		if ($this->varStatus !== NULL && $this->varStatus != '$iterator')
 			$ret .= "{var {$this->varStatus}=\$iterator}";
+		if ($this->varIndex !== NULL && $this->varIndex != '$iterations')
+			$ret .= "{var {$this->varIndex}=\$iterations}";
 		return $ret;
 	}
 	
@@ -122,7 +126,7 @@ class DataTableElement extends \XTemp\Tree\Element
 	
 	protected function renderAttribute($name)
 	{
-		if ($name != 'value' && $name != 'var')
+		if ($name != 'value' && $name != 'var' && $name != 'varStatus' && $name != 'varIndex')
 			return parent::renderAttribute($name);
 		else
 			return '';

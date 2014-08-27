@@ -17,24 +17,16 @@ class ForEachElement extends \XTemp\Tree\Element
 	private $value;
 	private $varname;
 	private $varStatus;
+	private $varIndex;
 	
 	protected function loadParams()
 	{
 		$this->value = $this->requireAttrExpr('items');
 		$this->varname = $this->requireAttrVar('var');
 		$this->varStatus = $this->useAttrVar('varStatus', NULL);
+		$this->varIndex = $this->useAttrVar('varIndex', NULL);
 	}
 	
-	public function rrender()
-	{
-		$ret = "\n{foreach {$this->items->toPHP()} as {$this->var}}\n";
-		if ($this->varStatus !== NULL && $this->varStatus != '$iterator')
-			$ret .= "{var {$this->varStatus}=\$iterator}";
-		$ret .= $this->renderChildren();
-		$ret .= "\n{/foreach}\n";
-		return $ret;
-	}
-
 	public function render()
 	{
 		$ret = '';
@@ -65,6 +57,8 @@ class ForEachElement extends \XTemp\Tree\Element
 		}
 		if ($this->varStatus !== NULL && $this->varStatus != '$iterator')
 			$ret .= "{var {$this->varStatus}=\$iterator}";
+		if ($this->varIndex !== NULL && $this->varIndex != '$iterations')
+			$ret .= "{var {$this->varIndex}=\$iterations}";
 		return $ret;
 	}
 	
