@@ -146,7 +146,7 @@ class FormElement extends \XTemp\Tree\Element
 			$expr = $root->getMappingValue();
 			if ($expr !== NULL)
 			{
-				return "$id=>'$expr',";
+				return "$id=>$expr,";
 			}
 			return '';
 		}

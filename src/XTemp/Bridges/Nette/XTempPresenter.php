@@ -7,6 +7,7 @@
 namespace XTemp\Bridges\Nette;
 
 use XTemp\InvalidExpressionException;
+use XTemp\Tree\Expression;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -88,13 +89,10 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		{
 			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
-				$dest = $this->decodeMapping($mapping[$name]);
-				$obj = $dest[0];
-				$prop = $dest[1];
-				$idx = $dest[2];
+				list($obj, $prop, $idx) = $this->decodeMapping($mapping[$name]);
 				//echo "prop=$prop and idx=$idx and value=$value<br>";
 				
-				if ($idx === '')
+				if ($idx === NULL)
 					$obj->$prop = $value;
 				else
 					$obj->{$prop}[$idx] = $value;
@@ -126,40 +124,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	protected function decodeMapping($str)
 	{
 		$p = explode(':', $str);
-		$srcobj = $this;
-		for ($i = 0; $i < count($p); $i++)
-		{
-			$prop = $p[$i];
-			$idx = '';
-			
-			//locate the array index if used
-			$p1 = strpos($prop, '[');
-			$p2 = strpos($prop, ']');
-			if ($p1 !== FALSE && $p2 !== FALSE && $p2 > $p1)
-			{
-				$idx = substr($prop, $p1+1, $p2 - $p1 - 1);
-				$prop = substr($prop, 0, $p1);
-			}
-			
-			if ($i < count($p) - 1)
-			{
-				//reach the right property
-				if ($i === 0 && $prop == 'this')
-					$srcobj = $this;
-				else if (isset($srcobj->$prop))
-					$srcobj = $srcobj->$prop;
-				else
-					throw new InvalidExpressionException("Couldn't find the property $prop from $str in the presenter");
-				
-				//reach the index if used
-				if ($idx !== '')
-				{
-					$srcobj = $srcobj[$idx];
-				}
-			}
-			
-		}
-		return array($srcobj, $prop, $idx);
+		return Expression::findProperty($this, $p);
 	}
 	
 	//===========================================================================

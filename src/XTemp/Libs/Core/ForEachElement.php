@@ -45,11 +45,11 @@ class ForEachElement extends \XTemp\Tree\Element
 		{
 			$keyname = '$_xt_fe_key' . (self::$keyindex++);
 			$ctrlname = '$_xt_fe_ctrl' . (self::$keyindex++);
-			$mapping = $this->value->getLValueIdString() . "[$keyname]";
-				
+			$mapping = $this->value->getLValueMapString() . ".\"[$keyname]\"";
+			
 			$ret .= '{var ' . $ctrlname . '=' . $this->value->toPHP() . '}';
 			$ret .= '{foreach ' . $ctrlname . ' as ' . $keyname . '=>' . $this->varname . "}\n";
-			$ret .= '{? $_xt_ctx->open("' . $mapping . '", array(\'' . substr($this->varname, 1) . '\'=>' . $ctrlname . '[' . $keyname . ']))}';
+			$ret .= '{? $_xt_ctx->open(' . $mapping . ', array(\'' . substr($this->varname, 1) . '\'=>' . $ctrlname . '[' . $keyname . ']))}';
 		}
 		else
 		{

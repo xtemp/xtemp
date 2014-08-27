@@ -52,22 +52,13 @@ class TemplateContext
 	 * (no local scope contains the variable), the corresponding presenter property is
 	 * returned instead.
 	 * 
-	 * @param unknown $root the variable name
+	 * @param string $rootspec the variable name optionally followed by the properties
 	 * @return unknown the located variable or presenter property
 	 */
-	public function find($root)
+	public function find($rootspec)
 	{
-		$prop = $root;
-		$idx = '';
-		//locate the array index if used
-		$p1 = strpos($prop, '[');
-		$p2 = strpos($prop, ']');
-		if ($p1 !== FALSE && $p2 !== FALSE && $p2 > $p1)
-		{
-			$idx = substr($prop, $p1+1, $p2 - $p1 - 1);
-			$prop = substr($prop, 0, $p1);
-		}
-			
+		list($prop, $idx) = Expression::decodeProperty($rootspec);
+		
 		//try to find the mapping for the variable in the stack
 		$mapping = NULL;
 		for ($i = count($this->varStack) - 1; $i >= 0; $i--)
@@ -80,16 +71,26 @@ class TemplateContext
 			}
 		}
 		
-		$ret = NULL;
+		//find the root object
+		$root = NULL;
 		if ($mapping !== NULL)
-			$ret = $mapping; //found in local scope, return the value found
+			$root = $mapping; //found in local scope, return the value found
 		else
-			$ret = $this->presenter->$prop; //not found in local scope, try the presenter
+			$root = $this->presenter->$prop; //not found in local scope, try the presenter
+		if ($idx !== NULL) //if the index is defined, use it
+			$root = $root[$idx];
 		
-		if ($idx !== '') //if the index is defined, use it
-			$ret = $ret[$idx];
-		
-		return $ret;
+		//apply the remaining properties (if any)
+		if (func_num_args() > 1)
+		{
+			list($obj, $prop, $idx) = Expression::findProperty($root, array_slice(func_get_args(), 1));
+			if ($idx === NULL)
+				return $obj->$prop;
+			else
+				return $obj->{$prop}[$idx];
+		}
+		else
+			return $root;
 	}
 	
 	/**

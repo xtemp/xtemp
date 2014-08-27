@@ -27,8 +27,8 @@ class CommandButtonElement extends InputField
 	
 	public function getMappingValue()
 	{
-		if ($this->action !== NULL && $this->action->isLValue())
-			return implode(':', $this->action->getLValueIdentifiers());
+		if ($this->action !== NULL)
+			return $this->action->getLValueMapString();
 		else
 			return NULL;
 	}

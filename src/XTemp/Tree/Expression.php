@@ -51,14 +51,79 @@ class Expression
 			return NULL;
 	}
 	
-	public function getLValueIdString()
+	public function getLValueMapString()
 	{
-		if ($this->isLValue())
-			return implode(':', $this->getLValueIdentifiers());
+		$ids = $this->getLValueIdentifiers();
+		if ($ids !== NULL)
+		{
+			$ret = array();
+			foreach ($ids as $id)
+				$ret[] = $id->toPHP();
+			return implode(".':'.", $ret);
+		}
 		else
 			return NULL;
 	}
 	
+	
+	//=========================================================================
+	
+	/**
+	 * Finds the property or function determined by a root object and a list of sub-properties. 
+	 * @param unknown $root The root object to start with.
+	 * @param unknown $properties The list of properties to follow. Indices in [] are allowed in property names.
+	 * @throws InvalidExpressionException
+	 * @return An array of three members: An identified object, the final property or function name and the optional index
+	 * used for the last property or empty string when no index is used.
+	 */
+	public static function findProperty($root, $properties)
+	{
+		$p = $properties;
+		$srcobj = $root;
+		for ($i = 0; $i < count($p); $i++)
+		{
+			list($prop, $idx) = self::decodeProperty($p[$i]);
+				
+			if ($i < count($p) - 1)
+			{
+				//reach the right property
+				if ($i === 0 && $prop == 'this')
+					$srcobj = $root;
+				else if (isset($srcobj->$prop))
+					$srcobj = $srcobj->$prop;
+				else
+					throw new \XTemp\InvalidExpressionException("Couldn't find the property $prop in " . get_class($srcobj));
+			
+				//reach the index if used
+				if ($idx !== NULL)
+				{
+					$srcobj = $srcobj[$idx];
+				}
+			}
+			
+		}
+		return array($srcobj, $prop, $idx);
+	}
+	
+	/**
+	 * Decodes the property with an optional [] index to the property name and the index value.
+	 * @param string $p property specification, e.g. hello[12]
+	 * @return array array of two members: the property name (e.g. 'hello') and the index value (e.g. '12') or
+	 * NULL when no index is used.
+	 */
+	public static function decodeProperty($p)
+	{
+		$prop = $p;
+		$idx = NULL;
+		$p1 = strpos($prop, '[');
+		$p2 = strpos($prop, ']');
+		if ($p1 !== FALSE && $p2 !== FALSE && $p2 > $p1)
+		{
+			$idx = substr($prop, $p1+1, $p2 - $p1 - 1);
+			$prop = substr($prop, 0, $p1);
+		}
+		return array($prop, $idx);
+	}
 	
 	//=========================================================================
 	
@@ -170,17 +235,16 @@ class Expression
 		}
 		else
 		{
-			$root = $ids[0];
-			$expr = '$_xt_ctx->find("' . $root . '")';
-			if (count($ids) > 1)
-				$expr .= '->' . implode('->', array_slice($ids, 1));
+			$expr = '$_xt_ctx->find(' . $ids[0]->toPHP();
+			for ($i = 1; $i < count($ids); $i++)
+				$expr .= ',' . $ids[$i]->toPHP();
+			$expr  .= ')';
 			return $expr;
 		}
 	}
 	
 	public static function parseLValue($value)
 	{
-		echo "PARSE: $value<br>";
 		$v = trim($value);
 		if (strlen($v) > 2 && substr($v, 0, 1) == '$')
 		{
@@ -188,13 +252,7 @@ class Expression
 			$ids = self::splitIdString($v);
 			$ret = array();
 			foreach ($ids as $cand)
-			{
-				$id = trim($cand);
-				if (self::isVarName($id))
-					$ret[] = $id;
-				else
-					return NULL;
-			}
+				$ret[] = new Expression(trim($cand));
 			if (count($ret) == 0)
 				return NULL;
 			else
@@ -263,7 +321,6 @@ class Expression
 		}
 		if ($cur)
 			$ret[] = $cur;
-		echo "<pre>"; print_r($ret); echo "</pre>";
 		return $ret;
 	}  
 	

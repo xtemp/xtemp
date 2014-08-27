@@ -55,7 +55,7 @@ abstract class InputField extends FormField
 		$ret .= '$presenter->addFormField(';
 		$ret .= $this->id . ',';
 		$ret .= "'" . get_called_class() . "',";
-		$ret .= '$_xt_ctx->map("' . $this->getMappingValue() . "\"),";
+		$ret .= '$_xt_ctx->map(' . $this->getMappingValue() . '),';
 		$ret .= $this->getValue()->toPHP() . ',';
 		$ret .= 'array(' . $req . '));';
 		$ret .= "?>\n";
@@ -68,8 +68,8 @@ abstract class InputField extends FormField
 	 */
 	public function getMappingValue()
 	{
-		if ($this->value !== NULL && $this->value->isLValue())
-			return implode(':', $this->value->getLValueIdentifiers());
+		if ($this->value !== NULL)
+			return $this->value->getLValueMapString();
 		else
 			return NULL;
 	}
