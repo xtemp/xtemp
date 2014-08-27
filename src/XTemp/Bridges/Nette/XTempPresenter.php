@@ -211,4 +211,25 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		ob_clean();
 	}
 	
+	public function _xt_frm_param($formName, $fieldName, $paramName)
+	{
+		if (isset($this->_xt_forms[$formName]))
+		{
+			$def = $this->_xt_forms[$formName];
+			if (isset($def->params[$fieldName]))
+			{
+				$params = $def->params[$fieldName];
+				if (isset($params[$paramName]))
+					return $params[$paramName];
+				else
+					return NULL;
+			}
+			else
+				return NULL;
+		}
+		else
+			return NULL;
+		return NULL;
+	}
+	
 }

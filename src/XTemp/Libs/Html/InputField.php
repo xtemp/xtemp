@@ -31,10 +31,6 @@ abstract class InputField extends FormField
 		return $this->value;
 	}
 	
-	public function setLabel(OutputLabelElement $label)
-	{
-	}
-
 	public function render()
 	{
 		if ($this->form->inPhpMode())
@@ -43,12 +39,19 @@ abstract class InputField extends FormField
 			return '{input ' . $this->id . '}';
 	}
 	
-	protected function renderPhpControl()
+	protected function renderPhpControl($addParams = NULL)
 	{
 		$req = '';
 		if ($this->required === 'true')
 		{
 			$req = "'required'=>TRUE,'requiredMessage'=>" . $this->requiredMessage->toPHP(); 
+		}
+		if ($addParams)
+		{
+			if ($req)
+				$req .= ',';
+			foreach ($addParams as $name => $value)
+				$req .= "'$name'=>'$value'";
 		}
 		
 		$ret = "<?php ";

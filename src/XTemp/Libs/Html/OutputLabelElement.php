@@ -49,10 +49,18 @@ class OutputLabelElement extends FormField
 			return $this->renderDeclaration();
 		else
 		{
-			if ($this->partial)
+			$ret = '';
+			$ret .= '{if $presenter->_xt_frm_param(' . $this->form->getId() . ',' . $this->getFor() . ',\'partial\')}';
+			$ret .= '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+			$ret .= '{else}';
+			$ret .= '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+			$ret .= '{/if}';
+			return $ret;
+			
+			/*if ($this->partial)
 				return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
 			else
-				return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+				return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';*/
 		}
 	}
 	

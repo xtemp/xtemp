@@ -13,9 +13,17 @@ namespace XTemp\Libs\Html;
 class SelectBooleanCheckboxElement extends InputField
 {
 	
-	public function setLabel(OutputLabelElement $label)
+	public function render()
 	{
-		$label->setPartial(TRUE);
+		if ($this->form->inPhpMode())
+			return $this->renderPhpControl();
+		else
+			return '{input ' . $this->id . ':}';
+	}
+	
+	protected function renderPhpControl($addParams = NULL)
+	{
+		return parent::renderPhpControl(array('partial'=>1));
 	}
 	
 	public static function addToForm($form, $name, $label, $value, $params)
