@@ -86,10 +86,10 @@ class Expression
 			$stats->nexpr = 0;
 		}
 		
-		for($i = 0; $i < strlen ( $expr ); $i ++)
+		for ($i = 0; $i < strlen($expr); $i ++)
 		{
 			$c = $expr [$i];
-			$nc = ($i + 1 < strlen ( $expr )) ? $expr [$i + 1] : '';
+			$nc = ($i + 1 < strlen($expr)) ? $expr[$i + 1] : '';
 			switch ($state)
 			{
 				case 0 :
@@ -180,16 +180,16 @@ class Expression
 	
 	public static function parseLValue($value)
 	{
+		echo "PARSE: $value<br>";
 		$v = trim($value);
 		if (strlen($v) > 2 && substr($v, 0, 1) == '$')
 		{
 			$v = substr($v, 1);
-			$ids = explode('->', $v);
+			$ids = self::splitIdString($v);
 			$ret = array();
 			foreach ($ids as $cand)
 			{
 				$id = trim($cand);
-				//echo "Test '$id'<br>";
 				if (self::isVarName($id))
 					$ret[] = $id;
 				else
@@ -203,6 +203,69 @@ class Expression
 		else
 			return NULL;
 	}
+	
+	public static function splitIdString($expr)
+	{
+		$plevel = 0;
+		$blevel = 0;
+		$ret = array();
+		$cur = '';
+		
+		for ($i = 0; $i < strlen($expr); $i ++)
+		{
+			$c = $expr[$i];
+			$nc = ($i + 1 < strlen($expr)) ? $expr[$i + 1] : '';
+			
+			if ($c == '-' && $nc == '>')
+			{
+				if ($plevel === 0 && $blevel === 0)
+				{
+					$ret[] = $cur;
+					$cur = '';
+					$i++; //skip '>'
+				}
+				else
+					$cur .= $c;
+			}
+			else
+			{
+				if ($c == '[')
+				{
+					$cur .= $c;
+					$blevel++;
+					if ($blevel == 1)
+						$cur .= '#{';
+				}
+				else if ($c == ']')
+				{
+					if ($blevel == 1)
+						$cur .= '}';
+					$cur .= $c;
+					$blevel = $blevel > 0 ? $blevel - 1 : $blevel;
+				}
+				else if ($c == '(')
+				{
+					$cur .= $c;
+					$plevel++;
+					if ($plevel == 1)
+						$cur .= '#{';
+				}
+				else if ($c == ')')
+				{
+					if ($plevel == 1)
+						$cur .= '}';
+					$cur .= $c;
+					$plevel = $plevel > 0 ? $plevel - 1 : $plevel;
+				}
+				else
+					$cur .= $c;
+			}
+		}
+		if ($cur)
+			$ret[] = $cur;
+		echo "<pre>"; print_r($ret); echo "</pre>";
+		return $ret;
+	}  
 	
 	protected static function isVarName($name)
 	{
