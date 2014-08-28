@@ -12,41 +12,25 @@ namespace XTemp\Libs\Html;
  */
 class SelectBooleanCheckboxElement extends InputField
 {
-	private $required;
-	private $requiredMessage;
-	
-	protected function loadParams()
-	{
-		parent::loadParams();
-		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
-		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
-	}
-
-	public function beforeRender()
-	{
-		parent::beforeRender();
-	}
 	
 	public function render()
 	{
-		return '{input ' . $this->id . ':}';
+		if ($this->form->inPhpMode())
+			return $this->renderPhpControl();
+		else
+			return '{input ' . $this->id . ':}';
 	}
 	
-	public function getFnCall()
+	protected function renderPhpControl($addParams = NULL)
 	{
-		$lbl = '$labels[' . $this->id . ']';
-		$ret = 'addCheckbox(' . $this->id . ", isset($lbl)?$lbl:'')";
-		$ret .= '->setValue(' . $this->value->toPHP() . ')';
-		if ($this->required == "true")
-		{
-			$ret .= '->setRequired(' . $this->requiredMessage->toPHP() . ')';
-		}
-		return $ret;
+		return parent::renderPhpControl(array('partial'=>1));
 	}
 	
-	public function setLabel(OutputLabelElement $label)
+	public static function addToForm($form, $name, $label, $value, $params)
 	{
-		$label->setPartial(TRUE);
+		$f = $form->addCheckbox($name, $label);
+		if ($value)
+			$f->setValue($value);
 	}
 	
 }

@@ -12,35 +12,18 @@ namespace XTemp\Libs\Html;
  */
 class InputFileElement extends InputField
 {
-	private $required;
-	private $requiredMessage;
 	
 	protected function loadParams()
 	{
 		parent::loadParams();
-		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
-		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
-	}
-
-	public function beforeRender()
-	{
-		parent::beforeRender();
+		//TODO size limits etc
 	}
 	
-	public function render()
+	public static function addToForm($form, $name, $label, $value, $params)
 	{
-		return '{input ' . $this->id . '}';
+		$f = $form->addUpload($name, $label);
+		if (isset($params['required']) && $params['required'] === TRUE)
+			$f->setRequired($params['requiredMessage']);
 	}
 	
-	public function getFnCall()
-	{
-		$lbl = '$labels[' . $this->id . ']';
-		$ret = 'addUpload(' . $this->id . ", isset($lbl)?$lbl:'')";
-		//$ret .= '->setValue(' . $this->value->toPHP() . ')';
-		if ($this->required == "true")
-		{
-			$ret .= '->setRequired(' . $this->requiredMessage->toPHP() . ')';
-		}
-		return $ret;
-	}
 }

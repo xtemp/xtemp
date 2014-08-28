@@ -12,7 +12,7 @@ namespace XTemp\Tree;
  */
 abstract class Element extends Component
 {
-	protected static $serialNum = 1;
+	public static $serialNum = 1;
 	protected $domElement;
 	protected $attributes;
 	protected $context;
@@ -140,7 +140,7 @@ abstract class Element extends Component
 	
 	protected function generateId()
 	{
-		return '_xt_' . (Element::$serialNum++);
+		return '_xt_#{\XTemp\Tree\Element::$serialNum++}';
 	}
 	
 	protected function requireAttrPlain($name, $allowed = NULL)

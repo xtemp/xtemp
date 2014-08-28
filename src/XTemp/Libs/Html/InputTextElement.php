@@ -12,35 +12,14 @@ namespace XTemp\Libs\Html;
  */
 class InputTextElement extends InputField
 {
-	private $required;
-	private $requiredMessage;
 	
-	protected function loadParams()
+	public static function addToForm($form, $name, $label, $value, $params)
 	{
-		parent::loadParams();
-		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
-		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
+		$f = $form->addText($name, $label);
+		if ($value)
+			$f->setValue($value);
+		if (isset($params['required']) && $params['required'] === TRUE)
+			$f->setRequired($params['requiredMessage']);
 	}
 
-	public function beforeRender()
-	{
-		parent::beforeRender();
-	}
-	
-	public function render()
-	{
-		return '{input ' . $this->id . '}';
-	}
-	
-	public function getFnCall()
-	{
-		$lbl = '$labels[' . $this->id . ']';
-		$ret = 'addText(' . $this->id . ", isset($lbl)?$lbl:'')";
-		$ret .= '->setValue(' . $this->value->toPHP() . ')';
-		if ($this->required == "true")
-		{
-			$ret .= '->setRequired(' . $this->requiredMessage->toPHP() . ')';
-		}
-		return $ret;
-	}
 }

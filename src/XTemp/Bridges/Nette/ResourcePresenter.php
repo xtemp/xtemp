@@ -14,7 +14,7 @@ use XTemp\Context;
  *
  * @author      burgetr
  */
-class ResourcePresenter extends XTempPresenter
+class ResourcePresenter extends \Nette\Application\UI\Presenter
 {
 	private $paths;
 	

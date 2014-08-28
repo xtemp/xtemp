@@ -20,16 +20,6 @@ class CommandButtonElement extends InputField
 		$this->action = $this->requireAttrExpr("action");
 	}
 
-	public function beforeRender()
-	{
-		parent::beforeRender();
-	}
-	
-	public function render()
-	{
-		return '{input ' . $this->id . '}';
-	}
-	
 	public function getAction()
 	{
 		return $this->action;
@@ -37,15 +27,15 @@ class CommandButtonElement extends InputField
 	
 	public function getMappingValue()
 	{
-		if ($this->action !== NULL && $this->action->isLValue())
-			return implode(':', $this->action->getLValueIdentifiers());
+		if ($this->action !== NULL)
+			return $this->action->getLValueMapString();
 		else
 			return NULL;
 	}
 	
-	public function getFnCall()
+	public static function addToForm($form, $name, $label, $value, $params)
 	{
-		$ret = 'addSubmit(' . $this->id . ", " . $this->value->toPHP() .")";
-		return $ret;
+		$form->addSubmit($name, $value);
 	}
+	
 }

@@ -10,7 +10,7 @@ namespace XTemp\Libs\Html;
  *
  * @author      burgetr
  */
-class OutputLabelElement extends \XTemp\Tree\Element
+class OutputLabelElement extends FormField
 {
 	private $for;
 	private $value;
@@ -45,10 +45,32 @@ class OutputLabelElement extends \XTemp\Tree\Element
 	
 	public function render()
 	{
-		if ($this->partial)
-			return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+		if ($this->form->inPhpMode())
+			return $this->renderDeclaration();
 		else
-			return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+		{
+			$ret = '';
+			$ret .= '{if $presenter->_xt_frm_param(' . $this->form->getId() . ',' . $this->getFor() . ',\'partial\')}';
+			$ret .= '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+			$ret .= '{else}';
+			$ret .= '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';
+			$ret .= '{/if}';
+			return $ret;
+			
+			/*if ($this->partial)
+				return '{label ' . $this->getFor() . ':}{= ' . $this->getValue() . '}{/label}';
+			else
+				return '{label ' . $this->getFor() . '}{= ' . $this->getValue() . '}{/label}';*/
+		}
+	}
+	
+	protected function renderDeclaration()
+	{
+		$ret = "<?php ";
+		$ret .= '$presenter->addFormLabel('
+				. $this->for->toPHP() . ',' . $this->value->toPHP() . ');';
+		$ret .= "?>\n";
+		return $ret;
 	}
 	
 }

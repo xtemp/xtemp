@@ -15,8 +15,9 @@ class FormElement extends \XTemp\Tree\Element
 {
 	private static $formSn = 1;
 	private $id;
-	//internal label map
-	private $labels; 
+
+	protected $phpRenderMode = FALSE;
+	
 	
 	protected function loadParams()
 	{
@@ -28,17 +29,47 @@ class FormElement extends \XTemp\Tree\Element
 	public function beforeRender()
 	{
 		parent::beforeRender();
-		$this->storeFormDef();
+		$this->recursiveAssignFields($this);
+		//$this->storeFormDef();
 	}
 	
 	public function render()
 	{
 		$ret = '';
+		
+		//create the form definition code
+		$this->phpRenderMode = TRUE;
+		$ret .= "<?php\n";
+		$ret .= '$presenter->startFormRendering(\'' . $this->id . "');\n";
+		$ret .= "?>\n";
+		
+		$ret .= $this->renderChildren();
+		
+		$ret .= "<?php\n";
+		$ret .= '$presenter->finishFormRendering();' . "\n";
+		$ret .= "?>\n";
+		
+		//create the form rendering code
+		$this->phpRenderMode = FALSE;
 		$ret .= "{form $this->id}\n" . $this->renderChildren() . "\n{/form}";
 		return $ret;
 	}
 	
+	public function inPhpMode()
+	{
+		return $this->phpRenderMode;
+	}
+	
 	//=========================================================================
+	
+	private function recursiveAssignFields($root)
+	{
+		if ($root instanceof FormField)
+			$root->setForm($this);
+		foreach ($root->getChildren() as $child)
+			$this->recursiveAssignFields($child);
+	}
+	
 	
 	protected function storeFormDef()
 	{
@@ -115,7 +146,7 @@ class FormElement extends \XTemp\Tree\Element
 			$expr = $root->getMappingValue();
 			if ($expr !== NULL)
 			{
-				return "$id=>'$expr',";
+				return "$id=>$expr,";
 			}
 			return '';
 		}

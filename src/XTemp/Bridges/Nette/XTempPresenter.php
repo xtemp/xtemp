@@ -7,6 +7,8 @@
 namespace XTemp\Bridges\Nette;
 
 use XTemp\InvalidExpressionException;
+use XTemp\Tree\Expression;
+use \Tracy\Debugger;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -14,12 +16,31 @@ use XTemp\InvalidExpressionException;
  */
 class XTempPresenter extends \Nette\Application\UI\Presenter
 {
+	/**
+	 * Forms created from templates and stored in session.
+	 * @var array
+	 */
+	protected $_xt_forms;
+	
+	/**
+	 * Name of the form currently being created.
+	 * @var unknown
+	 */
+	protected $_xt_formName;
+	
+	/**
+	 * Saved element id generation status 
+	 * @var unknown
+	 */
+	protected $_xt_id_status;
+	
 	
 	public function startup()
 	{
 		parent::startup();
 		$this->template->getLatte()->setLoader(new \XTemp\Loader($this));
 		$this->restoreSessionProperties();
+		$this->restoreSessionForms();
 	}
 	
 	public function shutdown($response)
@@ -45,20 +66,17 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$ret = parent::createComponent($name);
 		if ($ret === NULL)
 		{
-			$ext = $this->getFormTempFile($name);
-			if (is_file($ext))
+			if (isset($this->_xt_forms[$name]))
 			{
-				include($ext);
-				$ret = _xt_create_form($this);
+				/*echo "Reconstruct<pre>";
+				print_r($this->_xt_forms[$name]);
+				echo "</pre>";*/
+				$ret = XTempForm::constructForm($this, $this->_xt_forms[$name]);
 				$ret->onSuccess[] = $this->_xt_processForm;
-				
-				$mapping = $this->loadMapping($name);
-				if ($mapping)
-				{
-					$ret->setMapping($mapping);
-				}
 			}
-			
+			else
+				echo "not found " . count($this->_xt_forms);
+				
 		}
 		return $ret;
 	}
@@ -70,12 +88,15 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$mapping = $form->getMapping();
 		foreach ($form->getValues(TRUE) as $name => $value)
 		{
-			if (isset($mapping[$name]))
+			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
-				$dest = $this->decodeMapping($mapping[$name]);
-				$obj = $dest[0];
-				$prop = $dest[1];
-				$obj->$prop = $value;
+				list($obj, $prop, $idx) = $this->decodeMapping($mapping[$name]);
+				//echo "prop=$prop and idx=$idx and value=$value<br>";
+				
+				if ($idx === NULL)
+					$obj->$prop = $value;
+				else
+					$obj->{$prop}[$idx] = $value;
 			}
 		}
 		
@@ -84,9 +105,10 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		if ($btn && $btn instanceof \Nette\ComponentModel\Component)
 		{
 			$name = $btn->getName();
-			if (isset($mapping[$name]))
+			if (isset($mapping[$name]) && $mapping[$name] != '')
 			{
-				$dest = $this->decodeMapping($mapping[$name]);
+				$destm = $this->decodeMapping($mapping[$name]);
+				$dest = array($destm[0], $destm[1]); //omit the eventual index
 				if (method_exists($dest[0], $dest[1]))
 				{
 					call_user_func($dest);
@@ -103,18 +125,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	protected function decodeMapping($str)
 	{
 		$p = explode(':', $str);
-		$srcobj = $this;
-		for ($i = 0; $i < count($p) - 1; $i++)
-		{
-			$prop = $p[$i];
-			if ($i === 0 && $prop == 'this')
-				$srcobj = $this;
-			else if (isset($srcobj->$prop))
-				$srcobj = $srcobj->$prop;
-			else
-				throw InvalidExpressionException("Couldn't find the property $prop in $str");
-		}
-		return array($srcobj, $p[$i]);
+		return Expression::findProperty($this, $p);
 	}
 	
 	//===========================================================================
@@ -136,7 +147,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$props = array();
 		foreach ($this->getSessionProperties() as $prop)
 		{
-			//echo "store: $prop = " . $this->$prop . "<br>";
+			//Debugger::fireLog("store: $prop = " . get_class($this->$prop) . "<br>");
 			$props[$prop] = $this->$prop;
 		}
 		$session = $this->getSession('XTemp/SessionScope');
@@ -147,6 +158,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$session = $this->getSession('XTemp/SessionScope');
 		$props = $session->properties;
+		//Debugger::fireLog("RESTORE"); Debugger::fireLog($props);
 		foreach ($this->getSessionProperties() as $prop)
 		{
 			if (isset($props[$prop]))
@@ -154,30 +166,72 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		}
 	}
 	
-	public function storeMapping($formId, $mapping)
+	public function saveSessionForms()
 	{
-		$session = $this->getSession('XTemp/FormMapping');
-		$session->$formId = $mapping;
+		$session = $this->getSession('XTemp/Forms/' . $this->getName());
+		$session->forms = $this->_xt_forms;
 	}
 	
-	public function loadMapping($formId)
+	public function restoreSessionForms()
 	{
-		$session = $this->getSession('XTemp/FormMapping');
-		return $session->$formId;
+		$session = $this->getSession('XTemp/Forms/' . $this->getName());
+		$this->_xt_forms = $session->forms;
 	}
 
 	//===========================================================================
 	
-	public function getFormTempFile($formName)
+	public function startFormRendering($formName)
 	{
-		$params = $this->context->getParameters();
-		$temp = $params['tempDir'] . "/cache/xtemp.forms/" . $this->name . "/";
-		if (!file_exists($temp))
-		{
-			if (!mkdir($temp, 0777, true))
-				throw new \RuntimeException("Unable to create cache directory '" . $temp . "'.");
-		}
-		$file = $temp . $formName . ".php";
-		return $file;
+		$this->_xt_formName = $formName;
+		$this->_xt_forms[$formName] = new FormDef();
+		//save the ID generation status: we want to reset it back after rendering
+		$this->_xt_id_status = \XTemp\Tree\Element::$serialNum;
+		//no ouput during the form definition rendering
+		ob_start();
 	}
+	
+	public function addFormLabel($name, $text)
+	{
+		$this->_xt_forms[$this->_xt_formName]->labels[$name] = $text;
+	}
+	
+	public function addFormField($name, $type, $mapping, $default, $params)
+	{
+		$def = $this->_xt_forms[$this->_xt_formName];
+		$def->types[$name] = $type;
+		$def->mappings[$name] = $mapping;
+		$def->values[$name] = $default;
+		$def->params[$name] = $params;
+	}
+	
+	public function finishFormRendering()
+	{
+		$this->saveSessionForms();
+		//restre the ID generation status
+		\XTemp\Tree\Element::$serialNum = $this->_xt_id_status;
+		//re-enable PHP output
+		ob_clean();
+	}
+	
+	public function _xt_frm_param($formName, $fieldName, $paramName)
+	{
+		if (isset($this->_xt_forms[$formName]))
+		{
+			$def = $this->_xt_forms[$formName];
+			if (isset($def->params[$fieldName]))
+			{
+				$params = $def->params[$fieldName];
+				if (isset($params[$paramName]))
+					return $params[$paramName];
+				else
+					return NULL;
+			}
+			else
+				return NULL;
+		}
+		else
+			return NULL;
+		return NULL;
+	}
+	
 }
