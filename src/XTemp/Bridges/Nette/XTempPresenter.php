@@ -8,6 +8,7 @@ namespace XTemp\Bridges\Nette;
 
 use XTemp\InvalidExpressionException;
 use XTemp\Tree\Expression;
+use \Tracy\Debugger;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -146,7 +147,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$props = array();
 		foreach ($this->getSessionProperties() as $prop)
 		{
-			//echo "store: $prop = " . $this->$prop . "<br>";
+			//Debugger::fireLog("store: $prop = " . get_class($this->$prop) . "<br>");
 			$props[$prop] = $this->$prop;
 		}
 		$session = $this->getSession('XTemp/SessionScope');
@@ -157,6 +158,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$session = $this->getSession('XTemp/SessionScope');
 		$props = $session->properties;
+		//Debugger::fireLog("RESTORE"); Debugger::fireLog($props);
 		foreach ($this->getSessionProperties() as $prop)
 		{
 			if (isset($props[$prop]))
