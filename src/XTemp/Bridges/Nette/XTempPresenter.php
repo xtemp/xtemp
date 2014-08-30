@@ -9,6 +9,8 @@ namespace XTemp\Bridges\Nette;
 use XTemp\InvalidExpressionException;
 use XTemp\Tree\Expression;
 use \Tracy\Debugger;
+use XTemp\ConverterException;
+use XTemp\Runtime\IConverter;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -93,10 +95,11 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 				list($obj, $prop, $idx) = $this->decodeMapping($mapping[$name]);
 				//echo "prop=$prop and idx=$idx and value=$value<br>";
 				
+				$val = $this->applyConverter($form->getParams($name), $value);
 				if ($idx === NULL)
-					$obj->$prop = $value;
+					$obj->$prop = $val;
 				else
-					$obj->{$prop}[$idx] = $value;
+					$obj->{$prop}[$idx] = $val;
 			}
 		}
 		
@@ -126,6 +129,24 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	{
 		$p = explode(':', $str);
 		return Expression::findProperty($this, $p);
+	}
+	
+	protected function applyConverter($params, $value)
+	{
+		if (isset($params['converter']))
+		{
+			$ccls = $params['converter'];
+			$conv = new $ccls;
+			$cparams = array();
+			if (isset($cparams['converter_p']))
+				$cparams = json_decode($params['converter_p']);
+			if ($conv instanceof IConverter)
+				return $conv->getAsObject($this, $cparams, $value);
+			else
+				throw new ConverterException("$ccls must implement \XTemp\Runtime\IConverter");
+		}
+		else
+			return $value;
 	}
 	
 	//===========================================================================

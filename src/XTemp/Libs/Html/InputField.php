@@ -59,7 +59,7 @@ abstract class InputField extends FormField
 			if ($req)
 				$req .= ',';
 			foreach ($this->controlParams as $name => $value)
-				$req .= "'$name'=>'$value'";
+				$req .= "'$name'=>'$value',";
 		}
 		
 		$ret = "<?php ";

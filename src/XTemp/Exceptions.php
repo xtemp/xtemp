@@ -44,6 +44,10 @@ class InvalidExpressionException extends \Latte\CompileException {
     //put your code here
 }
 
+class ConverterException extends XTempException {
+    //put your code here
+}
+
 class XMLParseException extends \Latte\CompileException {
 
     public function __construct($errors) {
