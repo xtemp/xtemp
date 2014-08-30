@@ -21,9 +21,10 @@ class SelectBooleanCheckboxElement extends InputField
 			return '{input ' . $this->id . ':}';
 	}
 	
-	protected function renderPhpControl($addParams = NULL)
+	protected function renderPhpControl()
 	{
-		return parent::renderPhpControl(array('partial'=>1));
+		$this->addControlParam('partial', 1);
+		return parent::renderPhpControl();
 	}
 	
 	public static function addToForm($form, $name, $label, $value, $params)

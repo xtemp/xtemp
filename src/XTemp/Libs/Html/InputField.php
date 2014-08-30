@@ -18,6 +18,9 @@ abstract class InputField extends FormField
 	protected $required;
 	protected $requiredMessage;
 	
+	/** Additional parametres to be passed to the rendered control */
+	protected $controlParams = array();
+	
 	protected function loadParams()
 	{
 		$this->id = $this->checkId();
@@ -38,19 +41,24 @@ abstract class InputField extends FormField
 		else
 			return '{input ' . $this->id . '}';
 	}
+
+	public function addControlParam($name, $value)
+	{
+		$this->controlParams[$name] = $value;
+	}
 	
-	protected function renderPhpControl($addParams = NULL)
+	protected function renderPhpControl()
 	{
 		$req = '';
 		if ($this->required === 'true')
 		{
 			$req = "'required'=>TRUE,'requiredMessage'=>" . $this->requiredMessage->toPHP(); 
 		}
-		if ($addParams)
+		if (count($this->controlParams) > 0)
 		{
 			if ($req)
 				$req .= ',';
-			foreach ($addParams as $name => $value)
+			foreach ($this->controlParams as $name => $value)
 				$req .= "'$name'=>'$value'";
 		}
 		
