@@ -16,7 +16,7 @@ class DateTimeConverter implements IConverter
 	
 	public function getAsString($context, $params, $value)
 	{
-		$format = isset($params['format']) ? $params['format'] : 'r';
+		$format = isset($params['pattern']) ? $params['pattern'] : 'r';
 		
 		if ($value instanceof \DateTime)
 		{
@@ -28,7 +28,7 @@ class DateTimeConverter implements IConverter
 	
 	public function getAsObject($context, $params, $value)
 	{
-		$format = isset($params['format']) ? $params['format'] : NULL;
+		$format = isset($params['pattern']) ? $params['pattern'] : NULL;
 		$timeZone = isset($params['timeZone']) ? new \DateTimeZone($params['timeZone']) : NULL;
 		
 		if ($format)

@@ -64,8 +64,8 @@ class XTempForm extends \Nette\Application\UI\Form
 			$ccls = $params['converter'];
 			$conv = new $ccls;
 			$cparams = array();
-			if (isset($cparams['converter_p']))
-				$cparams = json_decode($params['converter_p']);
+			if (isset($params['converter_p']))
+				$cparams = json_decode($params['converter_p'], TRUE);
 			if ($conv instanceof IConverter)
 				return $conv->getAsString($presenter, $cparams, $value);
 			else

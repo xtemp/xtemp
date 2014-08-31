@@ -138,8 +138,8 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 			$ccls = $params['converter'];
 			$conv = new $ccls;
 			$cparams = array();
-			if (isset($cparams['converter_p']))
-				$cparams = json_decode($params['converter_p']);
+			if (isset($params['converter_p']))
+				$cparams = json_decode($params['converter_p'], TRUE);
 			if ($conv instanceof IConverter)
 				return $conv->getAsObject($this, $cparams, $value);
 			else

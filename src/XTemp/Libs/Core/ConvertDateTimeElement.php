@@ -30,8 +30,19 @@ class ConvertDateTimeElement extends \XTemp\Tree\Element
 		if ($p instanceof InputField)
 		{
 			$p->addControlParam("converter", "\XTemp\Runtime\DateTimeConverter");
+			$pat = $this->pattern;
+			if ($pat === NULL)
+			{
+				switch ($this->type)
+				{
+					case 'time': $pat = 'H:i:s'; break;
+					case 'both': $pat = 'j M Y H:i:s'; break;
+					default: $pat = 'j M Y'; break;
+				}
+			}
+			
 			$parms = array('type'=>$this->type);
-			if ($this->pattern) $parms['pattern'] = $this->pattern;
+			$parms['pattern'] = $pat;
 			if ($this->timeZone) $parms['timeZone'] = $this->timeZone;
 			$p->addControlParam("converter_p", json_encode($parms));
 		}
