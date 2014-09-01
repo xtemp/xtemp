@@ -14,19 +14,23 @@ class OutElement extends \XTemp\Tree\Element
 {
 	private $value;
 	private $escape;
+	private $filter;
 	
 	protected function loadParams()
 	{
 		$this->value = $this->requireAttrExpr('value');
 		$this->escape = $this->useAttrPlain('escapeXml', "true", array('true', 'false'));
+		$this->filter = $this->useAttrPlain('filter', NULL);
 	}
 	
 	public function render()
 	{
+		$f = $this->filter === NULL ? '' : ('|' . $this->filter);
+		
 		if ($this->escape == "false")
-			return "{= " . $this->value->toPHP() . "|noescape}";
+			return "{= " . $this->value->toPHP() . "|noescape$f}";
 		else
-			return "{= " . $this->value->toPHP() . "}";
+			return "{= " . $this->value->toPHP() . "$f}";
 	}
 	
 }
