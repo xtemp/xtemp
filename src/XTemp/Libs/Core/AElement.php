@@ -13,10 +13,12 @@ namespace XTemp\Libs\Core;
 class AElement extends \XTemp\Tree\Element
 {
 	private $href;
+	private $params;
 	
 	protected function loadParams()
 	{
 		$this->href = $this->requireAttrExpr('href');
+		$this->params = $this->useAttrExpr('params', NULL);
 	}
 	
 	public function render()
@@ -26,9 +28,14 @@ class AElement extends \XTemp\Tree\Element
 
 	protected function renderAttribute($name)
 	{
-		if ($name == "href")
-			return 'href="{link ' . $this->href->toPHP() . '}"';
-		else
+		if ($name == 'href')
+		{
+			$p = '';
+			if ($this->params !== NULL)
+				$p = ", (expand) array" . $this->params->toPHP();
+			return 'href="{link ' . $this->href->toPHP() . $p . '}"';
+		}
+		else if ($name != 'params')
 			return parent::renderAttribute($name); 
 	}
 	

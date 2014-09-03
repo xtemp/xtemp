@@ -16,6 +16,9 @@ class OutElement extends \XTemp\Tree\Element
 	private $escape;
 	private $filter;
 	
+	private $convClass = NULL;
+	private $convParams = NULL;
+	
 	protected function loadParams()
 	{
 		$this->value = $this->requireAttrExpr('value');
@@ -23,14 +26,28 @@ class OutElement extends \XTemp\Tree\Element
 		$this->filter = $this->useAttrPlain('filter', NULL);
 	}
 	
+	public function addControlParam($name, $value)
+	{
+		if ($name === "converter")
+			$this->convClass = $value;
+		else if ($name === "converter_p")
+			$this->convParams = $value;
+	}
+	
 	public function render()
 	{
 		$f = $this->filter === NULL ? '' : ('|' . $this->filter);
 		
+		$v = $this->value->toPHP();
+		if ($this->convClass !== NULL)
+		{
+			$v = '(new ' . $this->convClass . ')->getAsString($presenter,' . var_export($this->convParams, TRUE) . ',' . $v . ')';
+		}
+		
 		if ($this->escape == "false")
-			return "{= " . $this->value->toPHP() . "|noescape$f}";
+			return "{= " . $v . "|noescape$f}";
 		else
-			return "{= " . $this->value->toPHP() . "$f}";
+			return "{= " . $v . "$f}";
 	}
 	
 }

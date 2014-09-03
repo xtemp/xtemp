@@ -27,7 +27,7 @@ class ConvertDateTimeElement extends \XTemp\Tree\Element
 	public function beforeRender()
 	{
 		$p = $this->getParent();
-		if ($p instanceof InputField)
+		if ($p !== NULL)
 		{
 			$p->addControlParam("converter", "\XTemp\Runtime\DateTimeConverter");
 			$pat = $this->pattern;
@@ -44,7 +44,7 @@ class ConvertDateTimeElement extends \XTemp\Tree\Element
 			$parms = array('type'=>$this->type);
 			$parms['pattern'] = $pat;
 			if ($this->timeZone) $parms['timeZone'] = $this->timeZone;
-			$p->addControlParam("converter_p", json_encode($parms));
+			$p->addControlParam("converter_p", $parms);
 		}
 	}
 	

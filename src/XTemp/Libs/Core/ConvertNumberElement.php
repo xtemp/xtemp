@@ -27,14 +27,14 @@ class ConvertNumberElement extends \XTemp\Tree\Element
 	public function beforeRender()
 	{
 		$p = $this->getParent();
-		if ($p instanceof InputField)
+		if ($p !== NULL)
 		{
 			$p->addControlParam("converter", "\XTemp\Runtime\NumberConverter");
 			$parms = array();
 			if ($this->decimals !== NULL) $parms['decimals'] = $this->decimals;
 			if ($this->decPoint !== NULL) $parms['decPoint'] = $this->decimals;
 			if ($this->thousandsSep !== NULL) $parms['thousandsSep'] = $this->thousandsSep;
-			$p->addControlParam("converter_p", json_encode($parms));
+			$p->addControlParam("converter_p", $parms);
 		}
 	}
 	

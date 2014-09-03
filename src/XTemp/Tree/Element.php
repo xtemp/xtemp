@@ -55,6 +55,18 @@ abstract class Element extends Component
 		return $name;
 	}
 	
+	/**
+	 * Adds a control parameter value to the element. This is used by convertor
+	 * elements to indicate a value conversion.
+	 * @param unknown $name
+	 * @param unknown $value
+	 */
+	public function addControlParam($name, $value)
+	{
+		//to be implemented by special elements when they accept some
+		//control params.
+	}
+	
 	//================================= Rendering Utilities ===========================================
 	
 	/**
