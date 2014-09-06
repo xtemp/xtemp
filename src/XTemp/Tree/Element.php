@@ -163,7 +163,7 @@ abstract class Element extends Component
 			if ($allowed === NULL || in_array(strtolower($v), $allowed))
 				return $v;
 			else
-				throw new \XTemp\MissingAttributeException("Invalid value '$v' of the attribute '$name'");
+				throw new \XTemp\InvalidAttributeValueException("Invalid value '$v' of the attribute '$name'");
 		}
 		else
 			throw new \XTemp\MissingAttributeException("Missing attribute '$name' of the <{$this->domElement->nodeName}> element");
@@ -177,7 +177,7 @@ abstract class Element extends Component
 			if ($allowed === NULL || in_array(strtolower($v), $allowed))
 				return $v;
 			else
-				throw new \XTemp\MissingAttributeException("Invalid value '$v' of the attribute '$name'");
+				throw new \XTemp\InvalidAttributeValueException("Invalid value '$v' of the attribute '$name'");
 		}
 		else
 			return $default;

@@ -24,6 +24,10 @@ class MissingAttributeException extends XTempException {
     //put your code here
 }
 
+class InvalidAttributeValueException extends XTempException {
+    //put your code here
+}
+
 class TagLibraryErrorException extends XTempException {
     //put your code here
 }
