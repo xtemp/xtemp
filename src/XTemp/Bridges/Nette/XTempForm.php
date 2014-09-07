@@ -47,10 +47,21 @@ class XTempForm extends \Nette\Application\UI\Form
 		$form = new \XTemp\Bridges\Nette\XTempForm();
 		foreach ($def->types as $name => $type)
 		{
+			//construct the field itself
 			$label = isset($def->labels[$name]) ? $def->labels[$name] : '';
 			$params = $def->params[$name];
 			$val = self::applyConverter($presenter, $params, $def->values[$name]);
 			call_user_func("$type::addToForm", $form, $name, $label, $val, $params);
+			
+			//add validation rules if specified
+			if (isset($params['validate']))
+			{
+				$vclass = $params['validate'];
+				$vparams = json_decode($params['validate_p'], TRUE);
+				call_user_func("$vclass::addToForm", $form, $name, $vparams);
+			}
+			
+			//attach the params to the form so we can use them later in the form
 			$form->setParams($name, $params);
 		}
 		$form->setMapping($def->mappings);
