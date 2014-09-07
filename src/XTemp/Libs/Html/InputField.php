@@ -60,7 +60,7 @@ abstract class InputField extends FormField
 				$req .= ',';
 			foreach ($this->controlParams as $name => $value)
 			{
-				$v = is_array($value) ? json_encode($value) : $value;
+				$v = is_array($value) ? $this->jsonWithExpr($value) : $value;
 				$req .= "'$name'=>'$v',";
 			}
 		}
@@ -86,6 +86,12 @@ abstract class InputField extends FormField
 			return $this->value->getLValueMapString();
 		else
 			return NULL;
+	}
+	
+	private function jsonWithExpr($value)
+	{
+		$v = json_encode($value);
+		return str_replace(array('<<!', '!>>'), array("'.", ".'"), $v);
 	}
 	
 	/**

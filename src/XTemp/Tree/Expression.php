@@ -11,7 +11,7 @@ namespace XTemp\Tree;
  *
  * @author      burgetr
  */
-class Expression
+class Expression implements \JsonSerializable
 {
 	protected $src;
 	
@@ -26,6 +26,11 @@ class Expression
 	public function toPHP()
 	{
 		return self::translate($this->src);
+	}
+	
+	public function jsonSerialize()
+	{
+		return '<<!' . $this->toPHP() . '!>>';
 	}
 	
 	public function isLValue()
