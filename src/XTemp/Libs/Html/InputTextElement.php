@@ -20,7 +20,6 @@ class InputTextElement extends InputField
 			$f->setValue($value);
 		if (isset($params['required']) && $params['required'] === TRUE)
 			$f->setRequired($params['requiredMessage']);
-		$f->addRule(\Nette\Forms\Form::MIN_LENGTH, "cosi", 2);
 	}
 
 }

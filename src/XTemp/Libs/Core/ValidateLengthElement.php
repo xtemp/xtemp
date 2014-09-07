@@ -32,6 +32,7 @@ class ValidateLengthElement extends Validator
 			$p->addControlParam("validate", get_called_class());
 			$parms = array();
 			if ($this->message) $parms['message'] = $this->message;
+			if ($this->allowEmpty) $parms['allowEmpty'] = $this->allowEmpty;
 			if ($this->minimum) $parms['minimum'] = $this->minimum;
 			if ($this->maximum) $parms['maximum'] = $this->maximum;
 			$p->addControlParam("validate_p", $parms);
@@ -40,11 +41,15 @@ class ValidateLengthElement extends Validator
 
 	public static function addToForm($form, $name, $params)
 	{
-		$msg = isset($params['message']) ? $params['message'] : NULL; 
+		$msg = isset($params['message']) ? $params['message'] : NULL;
+		$f = $form[$name];
+		if (isset($params['allowEmpty']) && $params['allowEmpty'] == 'true')
+			$f = $f->addCondition(Form::FILLED);
+		
 		if (isset($params['minimum']))
-			$form[$name]->addRule(Form::MIN_LENGTH, $msg, intval($params['minimum']));
+			$f->addRule(Form::MIN_LENGTH, $msg, intval($params['minimum']));
 		if (isset($params['maximum']))
-			$form[$name]->addRule(Form::MAX_LENGTH, $msg, intval($params['maximum']));
+			$f->addRule(Form::MAX_LENGTH, $msg, intval($params['maximum']));
 	}
 	
 	

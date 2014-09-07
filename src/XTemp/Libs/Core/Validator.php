@@ -13,10 +13,12 @@ namespace XTemp\Libs\Core;
 class Validator extends \XTemp\Tree\Element
 {
 	protected $message;
+	protected $allowEmpty;
 
 	protected function loadParams()
 	{
 		$this->message = $this->useAttrExpr('message', NULL);
+		$this->allowEmpty = $this->useAttrExpr('allowEmpty', NULL);
 	}
 	
 	public function render()
