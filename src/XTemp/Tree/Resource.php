@@ -4,31 +4,24 @@
  * Resource.php created on 24. 6. 2014 by burgetr
  */
 
-namespace XTemp;
+namespace XTemp\Tree;
 
 /**
  * A representation of an external resource (javascript, css, etc.) required by a component.
  *
  * @author      burgetr
  */
-class Resource
+abstract class Resource
 {
-	private $library;
-	private $path;
-	private $mime;
-	private $rel;
+	protected $path;
+	protected $mime;
+	protected $rel;
 	
-	public function __construct($library, $path, $mime, $rel = NULL)
+	public function __construct($path, $mime, $rel = NULL)
 	{
-		$this->library = $library;
 		$this->path = $path;
 		$this->mime = $mime;
 		$this->rel = $rel;
-	}
-	
-	public function getLibrary()
-	{
-		return $this->library;
 	}
 	
 	public function getPath()
@@ -46,13 +39,12 @@ class Resource
 		return $this->rel;
 	}
 	
-	public function getEmbeddedPath()
-	{
-		return $this->library . '/' . $this->path;
-	}
+	abstract public function getEmbeddedPath();
 	
-	public function getLocalPath()
-	{
-		return str_replace('.', '/', $this->library) . '/' . $this->path;
-	}
+	abstract public function getLocalPath();
+	
+	abstract public function getId();
+	
+	abstract public function isBetterThan($other);
+	
 }

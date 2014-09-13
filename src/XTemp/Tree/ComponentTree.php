@@ -54,7 +54,7 @@ class ComponentTree
 		 //unify duplicate resources
 		 foreach ($resources as $res)
 		 {
-		 	$ret[$res->getEmbeddedPath()] = $res;
+		 	$ret[$res->getId()] = $res;
 		 }
 		 return $ret;
 	}
