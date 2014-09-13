@@ -28,7 +28,7 @@ class LocalResource extends Resource
 	public function getId()
 	{
 		//local resources are identified by their embedded paths
-		return $this->getEmbeddedPath();
+		return $this->getRenderedPath("default", FALSE);
 	}
 	
 	public function isBetterThan($other)
@@ -42,13 +42,12 @@ class LocalResource extends Resource
 		return $this->library;
 	}
 	
-	public function getEmbeddedPath()
+	public function getRenderedPath($resourceLink, $local)
 	{
-		return $this->library . '/' . $this->path;
+		if ($local)
+			return '{$basePath}' . $resourceLink . str_replace('.', '/', $this->library) . '/' . $this->path;
+		else
+			return "{link " . $resourceLink . ", path => '" . $this->library . '/' . $this->path . "'}"; 
 	}
 	
-	public function getLocalPath()
-	{
-		return str_replace('.', '/', $this->library) . '/' . $this->path;
-	}
 }

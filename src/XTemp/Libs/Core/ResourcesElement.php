@@ -33,15 +33,15 @@ class ResourcesElement extends \XTemp\Tree\Element
 	
 	protected function renderResource($res)
 	{
-		$path = "";
-		if ($this->local != 'false')
+		$path = $res->getRenderedPath($this->resourceLink, $this->local != 'false');
+		/*if ($this->local != 'false')
 		{
 			$path = '{$basePath}' . $this->resourceLink . $res->getLocalPath();
 		}
 		else
 		{
 			$path = "{link " . $this->resourceLink . ", path => '" . $res->getEmbeddedPath() . "'}";
-		}
+		}*/
 		
 		$ret = "";
 		switch ($res->getMime())

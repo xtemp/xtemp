@@ -39,12 +39,10 @@ abstract class Resource
 		return $this->rel;
 	}
 	
-	abstract public function getEmbeddedPath();
-	
-	abstract public function getLocalPath();
-	
 	abstract public function getId();
 	
 	abstract public function isBetterThan($other);
+	
+	abstract public function getRenderedPath($resourceLink, $local);
 	
 }

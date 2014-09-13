@@ -39,13 +39,9 @@ class PublicResource extends Resource
 		return $this->version;
 	}
 	
-	public function getEmbeddedPath()
+	public function getRenderedPath($resourceLink, $local)
 	{
 		return $this->path;
 	}
 	
-	public function getLocalPath()
-	{
-		return $this->path;
-	}
 }
