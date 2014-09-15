@@ -54,7 +54,15 @@ class ComponentTree
 		 //unify duplicate resources
 		 foreach ($resources as $res)
 		 {
-		 	$ret[$res->getId()] = $res;
+		 	$resid = $res->getId();
+		 	if (isset($ret[$resid]))
+		 	{
+		 		$old = $ret[$resid];
+		 		if ($res->isBetterThan($old))
+		 			$ret[$resid] = $res;
+		 	}
+		 	else
+		 		$ret[$resid] = $res;
 		 }
 		 return $ret;
 	}
