@@ -23,7 +23,7 @@ class DateTimeConverter implements IConverter
 			return $value->format($format);
 		}
 		else
-			throw new ConverterException("Couldn't convert " . get_class($value) . " to date");
+			throw new ConverterException("Couldn't convert " . gettype($value) . " to date");
 	}
 	
 	public function getAsObject($context, $params, $value)
@@ -33,17 +33,27 @@ class DateTimeConverter implements IConverter
 		
 		if ($format)
 		{
+			$ret = NULL;
 			if ($timeZone)
-				return \DateTime::createFromFormat($format, $value, $timeZone);
+				$ret = \DateTime::createFromFormat($format, $value, $timeZone);
 			else
-				return \DateTime::createFromFormat($format, $value);
+				$ret = \DateTime::createFromFormat($format, $value);
+			
+			if ($ret !== FALSE)
+				return $ret;
+			else
+				throw new ConverterException("Couldn't convert " . $value . " to date");
 		}
 		else
 		{
-			if ($timeZone)
-				return new \DateTime($value, $timeZone);
-			else
-				return new \DateTime($value);
+			try {
+				if ($timeZone)
+					return new \DateTime($value, $timeZone);
+				else
+					return new \DateTime($value);
+			} catch (\Exception $e) {
+				throw new ConverterException("Couldn't convert " . $value . " to date");
+			}
 		}
 	}
 	

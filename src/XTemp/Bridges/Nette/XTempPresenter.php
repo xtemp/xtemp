@@ -74,6 +74,7 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 				print_r($this->_xt_forms[$name]);
 				echo "</pre>";*/
 				$ret = XTempForm::constructForm($this, $this->_xt_forms[$name]);
+				$ret->onValidate[] = $this->_xt_validateForm;
 				$ret->onSuccess[] = $this->_xt_processForm;
 			}
 			else
@@ -84,6 +85,26 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	}
 	
 	//===========================================================================
+
+	public function _xt_validateForm(XTempForm $form)
+	{
+		$mapping = $form->getMapping();
+		foreach ($form->getValues(TRUE) as $name => $value)
+		{
+			if (isset($mapping[$name]) && $mapping[$name] != '')
+			{
+				//validate the converters (if the value may be converted)
+				try {
+					$val = $this->applyConverter($form->getParams($name), $value);
+				} catch (\Exception $e) {
+					$msg = $e->getMessage();
+					if (!$msg)
+						$msg = "Converter error";
+					$form[$name]->addError($msg);
+				}
+			}
+		}
+	}
 	
 	public function _xt_processForm(XTempForm $form)
 	{
@@ -95,11 +116,15 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 				list($obj, $prop, $idx) = $this->decodeMapping($mapping[$name]);
 				//echo "prop=$prop and idx=$idx and value=$value<br>";
 				
-				$val = $this->applyConverter($form->getParams($name), $value);
-				if ($idx === NULL)
-					$obj->$prop = $val;
-				else
-					$obj->{$prop}[$idx] = $val;
+				try {
+					$val = $this->applyConverter($form->getParams($name), $value);
+					if ($idx === NULL)
+						$obj->$prop = $val;
+					else
+						$obj->{$prop}[$idx] = $val;
+				} catch (\Exception $e) {
+					$form->addError($e->getMessage());
+				}
 			}
 		}
 		
