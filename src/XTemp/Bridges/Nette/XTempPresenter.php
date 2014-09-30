@@ -37,10 +37,11 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	protected $_xt_id_status;
 	
 	
-	public function startup()
+	protected function startup()
 	{
 		parent::startup();
 		$this->template->getLatte()->setLoader(new \XTemp\Loader($this));
+		$this->createServices();
 		$this->restoreSessionProperties();
 		$this->restoreSessionForms();
 	}
@@ -175,6 +176,20 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 	}
 	
 	//===========================================================================
+	
+	protected function createServices()
+	{
+		$reflection = $this->getReflection();
+		$properties = $reflection->getProperties();
+		foreach ($properties as $property)
+		{
+			if (!is_null($service = $property->getAnnotation('Service')))
+			{
+				$property->setAccessible(true);
+				$property->setValue($this, $this->getContext()->getService($service));
+			}
+		}
+	}
 	
 	public function getSessionProperties()
 	{
