@@ -44,12 +44,14 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$this->createServices();
 		$this->restoreSessionProperties();
 		$this->restoreSessionForms();
+		$this->restorePresenterProperties();
 	}
 	
 	public function shutdown($response)
 	{
 		parent::shutdown($response);
 		$this->saveSessionProperties();
+		$this->savePresenterProperties();
 	}
 	
 	public function formatTemplateFiles()
@@ -221,6 +223,42 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$props = $session->properties;
 		//Debugger::fireLog("RESTORE"); Debugger::fireLog($props);
 		foreach ($this->getSessionProperties() as $prop)
+		{
+			if (isset($props[$prop]))
+				$this->$prop = $props[$prop];
+		}
+	}
+	
+	public function getPresenterProperties()
+	{
+		$rc = new \Nette\Reflection\ClassType(get_called_class());
+		$params = array();
+		foreach ($rc->getProperties() as $rp) {
+			if (!$rp->isStatic() && $rp->hasAnnotation('PresenterScoped')) {
+				$params[] = $rp->getName();
+			}
+		}
+		return $params;
+	}
+	
+	protected function savePresenterProperties()
+	{
+		$props = array();
+		foreach ($this->getPresenterProperties() as $prop)
+		{
+			//Debugger::fireLog("store: $prop = " . get_class($this->$prop) . "<br>");
+			$props[$prop] = $this->$prop;
+		}
+		$session = $this->getSession('XTemp/PresenterScope/' . $this->getName());
+		$session->properties = $props;
+	}
+	
+	protected function restorePresenterProperties()
+	{
+		$session = $this->getSession('XTemp/PresenterScope/' . $this->getName());
+		$props = $session->properties;
+		//Debugger::fireLog("RESTORE"); Debugger::fireLog($props);
+		foreach ($this->getPresenterProperties() as $prop)
 		{
 			if (isset($props[$prop]))
 				$this->$prop = $props[$prop];
