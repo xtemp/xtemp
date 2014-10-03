@@ -16,7 +16,7 @@ use XTemp\Runtime\IConverter;
  *
  * @author burgetr
  */
-class XTempPresenter extends \Nette\Application\UI\Presenter
+class XTempPresenter extends XhtmlPresenter
 {
 	/**
 	 * Forms created from templates and stored in session.
@@ -54,18 +54,6 @@ class XTempPresenter extends \Nette\Application\UI\Presenter
 		$this->savePresenterProperties();
 	}
 	
-	public function formatTemplateFiles()
-	{
-		$name = $this->getName();
-		$presenter = substr($name, strrpos(':' . $name, ':'));
-		$dir = dirname($this->getReflection()->getFileName());
-		$dir = is_dir("$dir/templates") ? $dir : dirname($dir);
-		return array(
-				"$dir/templates/$presenter/$this->view.xhtml",
-				"$dir/templates/$presenter.$this->view.xhtml",
-		);
-	}
-
 	protected function createComponent($name)
 	{
 		$ret = parent::createComponent($name);
