@@ -50,7 +50,7 @@ abstract class Element extends Component
 	public function getElementName()
 	{
 		$name = $this->domElement->nodeName;
-		if ($pp = strpos($name, ':') !== FALSE) //strip namespace from the tag name
+		if (($pp = strpos($name, ':')) !== FALSE) //strip namespace from the tag name
 			$name = substr($name, $pp + 1);
 		return $name;
 	}
