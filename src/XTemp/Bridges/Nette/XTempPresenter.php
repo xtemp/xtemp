@@ -40,7 +40,11 @@ class XTempPresenter extends XhtmlPresenter
 	protected function startup()
 	{
 		parent::startup();
+		//create a local XTemp context variable in the template
+		$this->template->_xt_ctx = new \XTemp\Tree\TemplateContext($this);
+		//use XTemp loader
 		$this->template->getLatte()->setLoader(new \XTemp\Loader($this));
+		//initialize the presenter
 		$this->createServices();
 		$this->restoreSessionProperties();
 		$this->restoreSessionForms();
