@@ -102,6 +102,9 @@ jQuery.fn.extend({
 	}
 });
 
+/*
+ * XTemp AJAX routines
+ */
 
 XtAjax = {
 

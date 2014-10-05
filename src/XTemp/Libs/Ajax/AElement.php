@@ -6,9 +6,6 @@
 
 namespace XTemp\Libs\Ajax;
 
-use XTemp\Tree\LocalResource;
-use XTemp\Tree\PublicResource;
-
 /**
  *
  * @author      burgetr
@@ -21,8 +18,7 @@ class AElement extends \XTemp\Tree\Element
 	public function __construct(\DOMElement $domElement, \XTemp\Context $context)
 	{
 		parent::__construct($domElement, $context);
-		$this->addResource(new PublicResource("jquery", "1.6.4", "http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js", "text/javascript"));
-		$this->addResource(new LocalResource("xtemp.ajax", "ajax.js", "text/javascript"));
+		Ajax::requireStdResources($this);
 	}
 	
 	protected function loadParams()
