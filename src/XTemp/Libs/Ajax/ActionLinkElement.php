@@ -10,7 +10,7 @@ namespace XTemp\Libs\Ajax;
  *
  * @author      burgetr
  */
-class AElement extends \XTemp\Tree\Element
+class ActionLinkElement extends \XTemp\Tree\Element
 {
 	private $action;
 	private $rerender;
