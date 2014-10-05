@@ -11,6 +11,7 @@ use XTemp\Tree\Expression;
 use \Tracy\Debugger;
 use XTemp\ConverterException;
 use XTemp\Runtime\IConverter;
+use XTemp\XTempException;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -324,5 +325,29 @@ class XTempPresenter extends XhtmlPresenter
 			return NULL;
 		return NULL;
 	}
+	
+	//===========================================================================
+	
+	public function handle_xt_signal($a, $r, $p)
+	{
+		if ($a)
+		{
+			$method = 'action' . ucfirst($a);
+			if ($p)
+				$params = explode(',', $p);
+			else
+				$params = array();
+			if (method_exists($this, $method))
+			{
+				call_user_func_array(array($this, $method), $params);
+			}
+			else
+				throw new XTempException("Method $method does not exist");
+		}
+		
+		if ($r)
+			$this->invalidateControl($r);
+	}
+	
 	
 }

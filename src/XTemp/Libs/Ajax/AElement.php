@@ -12,7 +12,8 @@ namespace XTemp\Libs\Ajax;
  */
 class AElement extends \XTemp\Tree\Element
 {
-	private $href;
+	private $action;
+	private $rerender;
 	private $params;
 	
 	public function __construct(\DOMElement $domElement, \XTemp\Context $context)
@@ -23,26 +24,27 @@ class AElement extends \XTemp\Tree\Element
 	
 	protected function loadParams()
 	{
-		$this->href = $this->requireAttrExpr('href');
+		//$this->href = $this->requireAttrExpr('href');
+		$this->action = $this->useAttrExpr('action', NULL);
+		$this->rerender = $this->useAttrExpr('reRender', NULL);
 		$this->params = $this->useAttrExpr('params', NULL);
 	}
 	
 	public function render()
 	{
-		return $this->renderStartElement() . $this->renderChildren() . $this->renderEndElement();
+		$p = '';
+		if ($this->action !== NULL)
+			$p .= ",'a'=>" . $this->action->toPHP();
+		if ($this->rerender !== NULL)
+			$p .= ",'r'=>" . $this->rerender->toPHP();
+		if ($this->params !== NULL)
+			$p .= ",'p'=>" . $this->params->toPHP();
+		
+		$ret = '';
+		$ret .= '<a href="#" onclick="XtAjax.link({link _xt_signal! ' . $p . ' }); return false;">';
+		$ret .= $this->renderChildren();
+		$ret .= '</a>';
+		return $ret;
 	}
 
-	protected function renderAttribute($name)
-	{
-		if ($name == 'href')
-		{
-			$p = '';
-			if ($this->params !== NULL)
-				$p = ", (expand) array" . $this->params->toPHP();
-			return 'href="#" onclick="XtAjax.link({link ' . $this->href->toPHP() . $p . '}); return false;"';
-		}
-		else if ($name != 'params' && $name != 'onclick')
-			return parent::renderAttribute($name); 
-	}
-	
 }
