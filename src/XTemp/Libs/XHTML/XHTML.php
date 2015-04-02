@@ -11,7 +11,7 @@ namespace XTemp\Libs\XHTML;
  * 
  * @author      burgetr
  */
-class XHTML extends \Xtemp\TagLib
+class XHTML extends \XTemp\TagLib
 {
 	public static $xmlns = "http://www.w3.org/1999/xhtml";
 	
