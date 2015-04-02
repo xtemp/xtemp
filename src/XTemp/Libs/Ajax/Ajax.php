@@ -16,7 +16,7 @@ use XTemp\Tree\PublicResource;
  */
 class Ajax extends \Xtemp\TagLib
 {
-	public static $xmlns = "http://github.com/xtemp/ns/ajax";
+	public static $xmlns = "http://xtemp.github.io/ns/ajax";
 	
 	public static function getResourcePaths()
 	{

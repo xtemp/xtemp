@@ -12,7 +12,7 @@ namespace XTemp\Libs\Core;
  */
 class Core extends \Xtemp\TagLib
 {
-	public static $xmlns = "http://github.com/xtemp/ns/core";
+	public static $xmlns = "http://xtemp.github.io/ns/core";
 	
 	
 }
