@@ -53,7 +53,7 @@ class ResourcePresenter extends XhtmlPresenter
 			
 			//send the response
 			$response = new \Nette\Application\Responses\FileResponse($path, NULL, $mime);
-			$this->context->session->close();
+			$this->context->getService('session')->close();
 			$this->sendResponse($response);
 			$this->terminate();
 		}
