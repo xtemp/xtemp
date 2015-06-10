@@ -39,6 +39,11 @@ class Loader extends Latte\Loaders\FileLoader
         }
 	}
 
+	public function getFilter()
+	{
+		return $this->filter;
+	}
+	
 	public function getContent($file)
 	{
 		$src = parent::getContent($file);

@@ -18,10 +18,18 @@ class Filter
 	protected $dependencies;
 	protected $context;
 	
+	protected $doctype;
+	
 	public function __construct(Context $context)
 	{
 		$this->context = $context;
 		$this->buildNamespaceTable();
+		$this->doctype = 'html';
+	}
+	
+	public function setDoctype($doctype)
+	{
+		$this->doctype = $doctype;
 	}
 	
 	public function process($src, $file = NULL)
@@ -40,10 +48,15 @@ class Filter
 			echo htmlspecialchars($tree->render());
 			echo "</pre>";*/
 			
-			return $tree->render();
+			return $this->renderDoctype() . $tree->render();
 		}
 		else
 			return '';
+	}
+	
+	protected function renderDoctype()
+	{
+		return "<!DOCTYPE {$this->doctype}>\n";
 	}
 	
 	public function buildTree($src, $file = NULL)
