@@ -47,7 +47,10 @@ class LocalResource extends Resource
 		if ($local)
 			return '{$basePath}' . $resourceLink . str_replace('.', '/', $this->library) . '/' . $this->path;
 		else
-			return "{link " . $resourceLink . ", path => '" . $this->library . '/' . $this->path . "'}"; 
+			return "{link " . $resourceLink 
+				. ", path => '" . $this->library . '/' . $this->path . '\''
+				. ", t => '" . $this->mime . '\'' 
+				. "}"; 
 	}
 	
 }

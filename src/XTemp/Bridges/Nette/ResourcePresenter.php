@@ -41,15 +41,19 @@ class ResourcePresenter extends XhtmlPresenter
 		$this->paths = $filter->getResourcePaths();
 	}
 	
-	public function renderResource($path)
+	public function renderResource($path, $t)
 	{
 		$path = $this->translatePath($path);
 		if ($path && (is_file($path) || is_link($path)))
 		{
-			//guess the MIME type
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			$mime = finfo_file($finfo, $path);
-			finfo_close($finfo);
+			$mime = $t;
+			if (!$mime)
+			{
+				//guess the MIME type
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				$mime = finfo_file($finfo, $path);
+				finfo_close($finfo);
+			}
 			
 			//send the response
 			$response = new \Nette\Application\Responses\FileResponse($path, NULL, $mime);
