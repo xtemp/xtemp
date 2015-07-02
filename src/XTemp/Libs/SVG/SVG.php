@@ -1,17 +1,17 @@
 <?php
 /*
  * XTemp - XML Templating Engine for PHP
- * XHTML.php created on 6. 6. 2014 by burgetr
+ * SVG.php created on 6. 6. 2014 by burgetr
  */
 
 namespace XTemp\Libs\SVG;
 
 /**
- * Standard XHTML tag library.
+ * Standard SVG tag library.
  * 
  * @author      burgetr
  */
-class XHTML extends \Xtemp\TagLib
+class SVG extends \Xtemp\TagLib
 {
 	public static $xmlns = "http://www.w3.org/2000/svg";
 	
