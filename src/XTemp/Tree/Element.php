@@ -101,7 +101,7 @@ abstract class Element extends Component
 	
 	protected function renderAttribute($name)
 	{
-		return $name . '="{= ' . $this->attributes[$name] . '}"';
+		return $name . '="{= ' . $this->attributes[$name] . '|noescape}"';
 	}
 	
 	//================================= Attribute Utilities ===========================================
