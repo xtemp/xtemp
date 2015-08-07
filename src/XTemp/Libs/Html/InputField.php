@@ -17,6 +17,7 @@ abstract class InputField extends FormField
 	
 	protected $required;
 	protected $requiredMessage;
+	protected $classes;
 	
 	/** Additional parametres to be passed to the rendered control */
 	protected $controlParams = array();
@@ -27,6 +28,7 @@ abstract class InputField extends FormField
 		$this->value = $this->requireAttrExpr('value');
 		$this->required = $this->useAttrPlain("required", "false", array("true", "false"));
 		$this->requiredMessage = $this->useAttrExpr("requiredMessage", 'Value required');
+		$this->classes = $this->useAttrExpr("class", '');
 	}
 	
 	public function getValue()
@@ -53,6 +55,12 @@ abstract class InputField extends FormField
 		if ($this->required === 'true')
 		{
 			$req = "'required'=>TRUE,'requiredMessage'=>" . $this->requiredMessage->toPHP(); 
+		}
+		if ($this->classes)
+		{
+			if ($req)
+				$req .= ',';
+			$req = "'classes'=>" . $this->classes->toPHP(); 
 		}
 		if (count($this->controlParams) > 0)
 		{

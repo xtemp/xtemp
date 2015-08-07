@@ -24,6 +24,8 @@ class InputFileElement extends InputField
 		$f = $form->addUpload($name, $label);
 		if (isset($params['required']) && $params['required'] === TRUE)
 			$f->setRequired($params['requiredMessage']);
+		if (isset($params['classes']))
+			$f->getControlPrototype()->addClass($params['classes']);
 	}
 	
 }

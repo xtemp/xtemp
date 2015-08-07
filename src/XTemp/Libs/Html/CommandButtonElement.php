@@ -35,7 +35,9 @@ class CommandButtonElement extends InputField
 	
 	public static function addToForm($form, $name, $label, $value, $params)
 	{
-		$form->addSubmit($name, $value);
+		$f = $form->addSubmit($name, $value);
+		if (isset($params['classes']))
+			$f->getControlPrototype()->addClass($params['classes']);
 	}
 	
 }

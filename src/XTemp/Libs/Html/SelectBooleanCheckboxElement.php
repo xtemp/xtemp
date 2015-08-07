@@ -32,6 +32,8 @@ class SelectBooleanCheckboxElement extends InputField
 		$f = $form->addCheckbox($name, $label);
 		if ($value)
 			$f->setValue($value);
+		if (isset($params['classes']))
+			$f->getControlPrototype()->addClass($params['classes']);
 	}
 	
 }
