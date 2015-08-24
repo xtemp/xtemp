@@ -15,6 +15,7 @@ class ComponentTree
 	private $file;
 	private $root;
 	protected $dependencies = array();
+	protected $defaultResources = array();	
 	
 	public function __construct($file)
 	{
@@ -47,24 +48,29 @@ class ComponentTree
 		return $this->dependencies;
 	}
 
+	public function setDefaultResources($resources)
+	{
+		$this->defaultResources = $resources;
+	}
+	
 	public function getAllResources()
 	{
-		 $resources = $this->recursiveGetResources($this->getRoot());
-		 $ret = array();
-		 //unify duplicate resources
-		 foreach ($resources as $res)
-		 {
-		 	$resid = $res->getId();
-		 	if (isset($ret[$resid]))
-		 	{
-		 		$old = $ret[$resid];
-		 		if ($res->isBetterThan($old))
-		 			$ret[$resid] = $res;
-		 	}
-		 	else
-		 		$ret[$resid] = $res;
-		 }
-		 return $ret;
+		$resources = array_merge($this->defaultResources, $this->recursiveGetResources($this->getRoot()));
+		$ret = array();
+		//unify duplicate resources
+		foreach ($resources as $res)
+		{
+			$resid = $res->getId();
+			if (isset($ret[$resid]))
+			{
+				$old = $ret[$resid];
+				if ($res->isBetterThan($old))
+					$ret[$resid] = $res;
+			}
+			else
+				$ret[$resid] = $res;
+		}
+		return $ret;
 	}
 	
 	protected function recursiveGetResources($root)

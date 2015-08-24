@@ -27,6 +27,11 @@ class Filter
 		$this->doctype = 'html';
 	}
 	
+	public function getContext()
+	{
+		return $this->context;
+	}
+	
 	public function setDoctype($doctype)
 	{
 		$this->doctype = $doctype;
@@ -66,6 +71,8 @@ class Filter
 		if ($domRoot)
 		{
 			$tree = new Tree\ComponentTree($file);
+			if (isset($this->context->defaultResources))
+				$tree->setDefaultResources($this->context->defaultResources);
 			$tree->setRoot($this->buildSubtree($tree, $domRoot));
 			return $tree;
 		}

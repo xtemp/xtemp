@@ -12,6 +12,7 @@ use \Tracy\Debugger;
 use XTemp\ConverterException;
 use XTemp\Runtime\IConverter;
 use XTemp\XTempException;
+use XTemp\Tree\Resource;
 /**
  * A base presenter that integrates XTemp with Nette framework.
  *
@@ -37,6 +38,12 @@ class XTempPresenter extends XhtmlPresenter
 	 */
 	protected $_xt_id_status;
 	
+	/**
+	 * Default resources used for all the pages.
+	 * @var \XTemp\Loader
+	 */
+	protected $_xt_loader;
+	
 	
 	protected function startup()
 	{
@@ -44,7 +51,8 @@ class XTempPresenter extends XhtmlPresenter
 		//create a local XTemp context variable in the template
 		$this->template->_xt_ctx = new \XTemp\Tree\TemplateContext($this);
 		//use XTemp loader
-		$this->template->getLatte()->setLoader(new \XTemp\Loader($this));
+		$this->_xt_loader = new \XTemp\Loader($this);
+		$this->template->getLatte()->setLoader($this->_xt_loader);
 		//initialize the presenter
 		$this->createServices();
 		$this->restoreSessionProperties();
@@ -78,6 +86,19 @@ class XTempPresenter extends XhtmlPresenter
 				
 		}
 		return $ret;
+	}
+	
+	/**
+	 * Adds the given resource to default resources. These resources will be always
+	 * required for the page independently on the used tags.
+	 * @param Resource $resource
+	 */
+	public function addDefaultResource(Resource $resource)
+	{
+		$context = $this->_xt_loader->getFilter()->getContext();
+		if (!isset($context->defaultResources))
+			$context->default_resources = array();
+		$context->defaultResources[] = $resource;
 	}
 	
 	//===========================================================================
